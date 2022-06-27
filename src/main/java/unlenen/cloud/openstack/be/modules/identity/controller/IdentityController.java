@@ -28,7 +28,7 @@ public class IdentityController {
     @Autowired
     IdentityService identityService;
 
-    @GetMapping("/login/{domain}/{project}/{user}/{password}")
+    @PostMapping("/login/{domain}/{project}/{user}/{password}")
     public ResponseEntity<OpenStackResponse> login(@PathVariable String domain, @PathVariable String project, @PathVariable String user, @PathVariable String password) {
         OpenStackResponse openStackResponse = new OpenStackResponse();
         HttpStatus httpStatus;
