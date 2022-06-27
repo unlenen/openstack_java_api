@@ -7,19 +7,24 @@ openstack:
             domain: default
             project: argela_admin
             
-
 testData:
-    domain:
-        name: nebi-domain10
-        project:
-            name: nebi-project10
-        users:
-            system:
-                name: argela_admin
-                password: argela
-                domain: default
-                project: argela_admin
-            test1:
-                name: nebi_user_10
-                password: argela
+    system_user:
+        name: argela_admin
+        password: argela
+        domain: default
+        project: argela_admin
     
+    identity_service:
+        domain:
+            name: nebi-domain10
+            project:
+                name: nebi-project10
+            users:
+                test1:
+                    name: nebi_user_10
+                    password: argela
+    compute_service:
+        domain:
+            name: argela
+            project:
+                name: main-project

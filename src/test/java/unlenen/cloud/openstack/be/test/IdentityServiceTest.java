@@ -36,7 +36,7 @@ public class IdentityServiceTest {
     IdentityService identityService;
 
     @Autowired
-    OpenstackBeTestConfig config;
+    IdentityServiceTestConfig config;
 
     private String createSystemToken() throws Exception {
 
