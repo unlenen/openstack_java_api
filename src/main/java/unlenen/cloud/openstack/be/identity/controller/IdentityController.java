@@ -3,6 +3,7 @@ package unlenen.cloud.openstack.be.identity.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -70,16 +71,49 @@ public class IdentityController {
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
-    @GetMapping("/projects")
-    public ResponseEntity<OpenStackResponse> getProjects(
+    @PostMapping("/domain/{name}")
+    public ResponseEntity<OpenStackResponse> createDomain(
             @RequestHeader("token") String token,
-            @RequestParam(required = false, name = "domain") String domainName,
-            @RequestParam(required = false, name = "name") String projectName
+            @PathVariable() String name,
+            @RequestParam(required = false, name = "description", defaultValue = "") String description
     ) {
         OpenStackResponse openStackResponse = new OpenStackResponse();
         HttpStatus httpStatus;
         try {
-            openStackResponse.setOpenStackResult(identityService.getProjects(token, domainName, projectName));
+            openStackResponse.setOpenStackResult(identityService.createDomain(token, name, description));
+            httpStatus = HttpStatus.CREATED;
+        } catch (Exception e) {
+            httpStatus = handleError(openStackResponse, e);
+        }
+        return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
+    }
+
+    @DeleteMapping("/domain/{domainId}")
+    public ResponseEntity<OpenStackResponse> deleteDomain(
+            @RequestHeader("token") String token,
+            @PathVariable() String domainId
+    ) {
+        OpenStackResponse openStackResponse = new OpenStackResponse();
+        HttpStatus httpStatus;
+        try {
+            identityService.deleteDomain(token, domainId);
+            httpStatus = HttpStatus.NO_CONTENT;
+        } catch (Exception e) {
+            httpStatus = handleError(openStackResponse, e);
+        }
+        return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
+    }
+
+    @GetMapping("/projects")
+    public ResponseEntity<OpenStackResponse> getProjects(
+            @RequestHeader("token") String token,
+            @RequestParam(required = false, name = "domain") String domain,
+            @RequestParam(required = false, name = "name") String project
+    ) {
+        OpenStackResponse openStackResponse = new OpenStackResponse();
+        HttpStatus httpStatus;
+        try {
+            openStackResponse.setOpenStackResult(identityService.getProjects(token, domain, project));
             httpStatus = HttpStatus.OK;
         } catch (Exception e) {
             httpStatus = handleError(openStackResponse, e);
@@ -87,18 +121,35 @@ public class IdentityController {
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
-    @PostMapping("/domain/{domain}/project/{name}")
+    @PostMapping("/domain/{domainId}/project/{name}")
     public ResponseEntity<OpenStackResponse> createProject(
             @RequestHeader("token") String token,
-            @PathVariable() String domain,
+            @PathVariable() String domainId,
             @PathVariable() String name,
             @RequestParam(required = false, name = "description", defaultValue = "") String description
     ) {
         OpenStackResponse openStackResponse = new OpenStackResponse();
         HttpStatus httpStatus;
         try {
-            openStackResponse.setOpenStackResult(identityService.createProject(token, name, description, domain));
-            httpStatus = HttpStatus.OK;
+            openStackResponse.setOpenStackResult(identityService.createProject(token, name, description, domainId));
+            httpStatus = HttpStatus.CREATED;
+        } catch (Exception e) {
+            httpStatus = handleError(openStackResponse, e);
+        }
+        return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
+    }
+
+    @DeleteMapping("/domain/{domainId}/project/{projectId}")
+    public ResponseEntity<OpenStackResponse> deleteProject(
+            @RequestHeader("token") String token,
+            @PathVariable() String domainId,
+            @PathVariable() String projectId
+    ) {
+        OpenStackResponse openStackResponse = new OpenStackResponse();
+        HttpStatus httpStatus;
+        try {
+            identityService.deleteProject(token, projectId);
+            httpStatus = HttpStatus.NO_CONTENT;
         } catch (Exception e) {
             httpStatus = handleError(openStackResponse, e);
         }
@@ -123,21 +174,37 @@ public class IdentityController {
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
-    @PostMapping("/domain/{domain}/user/{username}")
-    public ResponseEntity<OpenStackResponse> getUsers(
+    @PostMapping("/domain/{domainId}/user/{username}")
+    public ResponseEntity<OpenStackResponse> createUser(
             @RequestHeader("token") String token,
-            @PathVariable() String domain,
+            @PathVariable() String domainId,
             @PathVariable() String username,
             @RequestParam(required = true, name = "password") String password,
             @RequestParam(required = false, name = "email", defaultValue = "") String email,
-            @RequestParam(required = false, name = "fullName") String fullName,
             @RequestParam(required = false, name = "description", defaultValue = "") String description
     ) {
         OpenStackResponse openStackResponse = new OpenStackResponse();
         HttpStatus httpStatus;
         try {
-            openStackResponse.setOpenStackResult(identityService.createUser(token, username, password, email, fullName, description, domain));
-            httpStatus = HttpStatus.OK;
+            openStackResponse.setOpenStackResult(identityService.createUser(token, username, password, email, description, domainId));
+            httpStatus = HttpStatus.CREATED;
+        } catch (Exception e) {
+            httpStatus = handleError(openStackResponse, e);
+        }
+        return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
+    }
+
+    @DeleteMapping("/domain/{domainId}/user/{userId}")
+    public ResponseEntity<OpenStackResponse> deleteUser(
+            @RequestHeader("token") String token,
+            @PathVariable() String domainId,
+            @PathVariable() String userId
+    ) {
+        OpenStackResponse openStackResponse = new OpenStackResponse();
+        HttpStatus httpStatus;
+        try {
+            identityService.deleteUser(token, userId);
+            httpStatus = HttpStatus.NO_CONTENT;
         } catch (Exception e) {
             httpStatus = handleError(openStackResponse, e);
         }

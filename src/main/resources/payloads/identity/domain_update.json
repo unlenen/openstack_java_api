@@ -1,0 +1,6 @@
+{
+    "domain": {
+        "description": "${DESCRIPTION}",
+        "enabled": ${ENABLED}
+    }
+}

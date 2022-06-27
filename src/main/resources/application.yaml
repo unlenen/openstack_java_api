@@ -1,8 +1,19 @@
-
-logging.level.com.baeldung.testloglevel: DEBUG
-
 openstack:
     keystone:
         url: https://os2-nfvlab.argela.com.tr:5000/v3
-        
-      
+
+testData:
+    domain:
+        name: nebi-domain10
+        project:
+            name: nebi-project10
+        users:
+            system:
+                name: argela_admin
+                password: argela
+                domain: default
+                project: argela_admin
+            test1:
+                name: nebi_user_10
+                password: argela
+    
