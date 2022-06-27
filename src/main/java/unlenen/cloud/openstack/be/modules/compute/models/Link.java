@@ -4,8 +4,8 @@ package unlenen.cloud.openstack.be.modules.compute.models;
  *
  * @author Nebi
  */
-public class RoleOptions {
+public class Link {
 
-    public boolean immutable;
-
+    public String rel;
+    public String href;
 }

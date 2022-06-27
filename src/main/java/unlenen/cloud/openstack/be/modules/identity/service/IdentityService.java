@@ -41,7 +41,7 @@ public class IdentityService extends CommonService {
             openstackResult = LoginResult.class
     )
     public LoginResult login(String domainName, String projectName, String username, String password) throws Exception {
-        ResponseEntity<String> responseEntity = call(openStackConfig.getKeystoneURL(),
+        ResponseEntity<String> responseEntity = call(openStackConfig.getIdentityURL(),
                 new Parameter[0],
                 new Parameter[]{
                     new Parameter("DOMAIN_NAME", domainName, ParameterType.JSON),
@@ -63,7 +63,7 @@ public class IdentityService extends CommonService {
             openstackResult = CategoryResult.class
     )
     public CategoryResult getCatalogs(String token) throws Exception {
-        return (CategoryResult) callWithResult(openStackConfig.getKeystoneURL(),
+        return (CategoryResult) callWithResult(openStackConfig.getIdentityURL(),
                 new Parameter[]{
                     new Parameter(OpenStackHeader.TOKEN.getKey(), token)
                 },
@@ -78,7 +78,7 @@ public class IdentityService extends CommonService {
             openstackResult = DomainResult.class
     )
     public DomainResult getDomains(String token, String domainName) throws Exception {
-        return (DomainResult) callWithResult(openStackConfig.getKeystoneURL(),
+        return (DomainResult) callWithResult(openStackConfig.getIdentityURL(),
                 new Parameter[]{
                     new Parameter(OpenStackHeader.TOKEN.getKey(), token)
                 },
@@ -97,7 +97,7 @@ public class IdentityService extends CommonService {
             openstackResult = DomainCreateResult.class
     )
     public DomainCreateResult createDomain(String token, String name, String description) throws Exception {
-        return (DomainCreateResult) callWithResult(openStackConfig.getKeystoneURL(),
+        return (DomainCreateResult) callWithResult(openStackConfig.getIdentityURL(),
                 new Parameter[]{
                     new Parameter(OpenStackHeader.TOKEN.getKey(), token)
                 },
@@ -116,7 +116,7 @@ public class IdentityService extends CommonService {
             openstackResult = DomainCreateResult.class
     )
     public void updateDomain(String token, String domainId, String enabled, String description) throws Exception {
-        call(openStackConfig.getKeystoneURL(),
+        call(openStackConfig.getIdentityURL(),
                 new Parameter[]{
                     new Parameter(OpenStackHeader.TOKEN.getKey(), token)
                 },
@@ -132,7 +132,7 @@ public class IdentityService extends CommonService {
             statusCode = HttpStatus.NO_CONTENT
     )
     public void deleteDomain(String token, String domainId) throws Exception {
-        call(openStackConfig.getKeystoneURL(),
+        call(openStackConfig.getIdentityURL(),
                 new Parameter[]{
                     new Parameter(OpenStackHeader.TOKEN.getKey(), token)
                 },
@@ -148,7 +148,7 @@ public class IdentityService extends CommonService {
             openstackResult = ProjectResult.class
     )
     public ProjectResult getProjects(String token, String domainName, String projectName) throws Exception {
-        return (ProjectResult) callWithResult(openStackConfig.getKeystoneURL(),
+        return (ProjectResult) callWithResult(openStackConfig.getIdentityURL(),
                 new Parameter[]{
                     new Parameter(OpenStackHeader.TOKEN.getKey(), token)
                 },
@@ -168,7 +168,7 @@ public class IdentityService extends CommonService {
             openstackResult = ProjectCreateResult.class
     )
     public ProjectCreateResult createProject(String token, String name, String description, String domainId) throws Exception {
-        return (ProjectCreateResult) callWithResult(openStackConfig.getKeystoneURL(),
+        return (ProjectCreateResult) callWithResult(openStackConfig.getIdentityURL(),
                 new Parameter[]{
                     new Parameter(OpenStackHeader.TOKEN.getKey(), token)
                 },
@@ -186,7 +186,7 @@ public class IdentityService extends CommonService {
             statusCode = HttpStatus.NO_CONTENT
     )
     public void deleteProject(String token, String projectId) throws Exception {
-        call(openStackConfig.getKeystoneURL(),
+        call(openStackConfig.getIdentityURL(),
                 new Parameter[]{
                     new Parameter(OpenStackHeader.TOKEN.getKey(), token)
                 },
@@ -202,7 +202,7 @@ public class IdentityService extends CommonService {
             openstackResult = UserResult.class
     )
     public UserResult getUsers(String token, String domainName, String name, String enabled) throws Exception {
-        return (UserResult) callWithResult(openStackConfig.getKeystoneURL(),
+        return (UserResult) callWithResult(openStackConfig.getIdentityURL(),
                 new Parameter[]{
                     new Parameter(OpenStackHeader.TOKEN.getKey(), token)
                 },
@@ -222,7 +222,7 @@ public class IdentityService extends CommonService {
             openstackResult = UserCreateResult.class
     )
     public UserCreateResult createUser(String token, String username, String password, String email, String description, String domainId) throws Exception {
-        return (UserCreateResult) callWithResult(openStackConfig.getKeystoneURL(),
+        return (UserCreateResult) callWithResult(openStackConfig.getIdentityURL(),
                 new Parameter[]{
                     new Parameter(OpenStackHeader.TOKEN.getKey(), token)
                 },
@@ -242,7 +242,7 @@ public class IdentityService extends CommonService {
             statusCode = HttpStatus.NO_CONTENT
     )
     public void deleteUser(String token, String userId) throws Exception {
-        call(openStackConfig.getKeystoneURL(),
+        call(openStackConfig.getIdentityURL(),
                 new Parameter[]{
                     new Parameter(OpenStackHeader.TOKEN.getKey(), token)
                 },
@@ -258,7 +258,7 @@ public class IdentityService extends CommonService {
             openstackResult = RoleResult.class
     )
     public RoleResult getRoles(String token, String domainName, String name) throws Exception {
-        return (RoleResult) callWithResult(openStackConfig.getKeystoneURL(),
+        return (RoleResult) callWithResult(openStackConfig.getIdentityURL(),
                 new Parameter[]{
                     new Parameter(OpenStackHeader.TOKEN.getKey(), token)
                 },
@@ -274,7 +274,7 @@ public class IdentityService extends CommonService {
             statusCode = HttpStatus.NO_CONTENT
     )
     public void assignRoleToDomain(String token, String domainId, String userId, String roleId) throws Exception {
-        call(openStackConfig.getKeystoneURL(),
+        call(openStackConfig.getIdentityURL(),
                 new Parameter[]{
                     new Parameter(OpenStackHeader.TOKEN.getKey(), token)
                 },
@@ -291,7 +291,7 @@ public class IdentityService extends CommonService {
             statusCode = HttpStatus.NO_CONTENT
     )
     public void assignRoleToProject(String token, String projectId, String userId, String roleId) throws Exception {
-        call(openStackConfig.getKeystoneURL(),
+        call(openStackConfig.getIdentityURL(),
                 new Parameter[]{
                     new Parameter(OpenStackHeader.TOKEN.getKey(), token)
                 },

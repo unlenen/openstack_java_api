@@ -38,8 +38,6 @@ public class IdentityServiceTest {
     @Autowired
     OpenstackBeTestConfig config;
 
-    static String domainId = "";
-
     private String createSystemToken() throws Exception {
 
         LoginResult loginResult = identityService.login(

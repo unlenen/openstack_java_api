@@ -7,8 +7,10 @@ import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import unlenen.cloud.openstack.be.config.OpenStackConfig;
 import unlenen.cloud.openstack.be.constant.Call;
+import unlenen.cloud.openstack.be.constant.OpenStackModule;
 import unlenen.cloud.openstack.be.constant.Parameter;
 import unlenen.cloud.openstack.be.exception.UnvalidCallException;
 import unlenen.cloud.openstack.be.model.result.OpenStackResult;
@@ -17,6 +19,7 @@ import unlenen.cloud.openstack.be.model.result.OpenStackResult;
  *
  * @author Nebi
  */
+@Component
 public class CommonService {
 
     @Autowired
@@ -27,6 +30,10 @@ public class CommonService {
 
     @Autowired
     ObjectMapper objectMapper;
+
+    protected String getServiceURL(String token, OpenStackModule openStackModule) throws Exception {
+        return config.getServiceURL(openStackModule);
+    }
 
     protected ResponseEntity call() throws Exception {
         return call("", new Parameter[0], new Parameter[0]);
