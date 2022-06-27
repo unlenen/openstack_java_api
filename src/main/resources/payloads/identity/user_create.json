@@ -1,0 +1,14 @@
+{
+    "user": {
+        "domain_id": "${DOMAIN}",
+        "enabled": true,
+        "federated": [],
+        "name": "${FULL_NAME}",
+        "password": "${PASSWORD}",
+        "description": "${DESCRIPTION}",
+        "email": "${EMAIL}",
+        "options": {
+            "ignore_password_expiry": true
+        }
+    }
+}
