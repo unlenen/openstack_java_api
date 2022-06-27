@@ -12,6 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import unlenen.cloud.openstack.be.Application;
+import unlenen.cloud.openstack.be.modules.compute.models.Flavor;
+import unlenen.cloud.openstack.be.modules.compute.result.FlavorCreateResult;
 import unlenen.cloud.openstack.be.modules.compute.result.FlavorResult;
 import unlenen.cloud.openstack.be.modules.compute.result.ServerResult;
 import unlenen.cloud.openstack.be.modules.compute.service.ComputeService;
@@ -51,7 +53,21 @@ public class ComputeServiceTest {
     }
 
     @Test
-    public void test_001_listFlavors() {
+    public void test_0001_createFlavor() {
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            FlavorCreateResult flavorCreateResult = computeService.createFlavor(
+                    token,
+                    config.getFlavorName(),
+                    config.getFlavorVcpus(),
+                    config.getFlavorRam(),
+                    config.getFlavorDisk());
+            assert flavorCreateResult.flavor.id != null;
+        });
+    }
+
+    @Test
+    public void test_0002_listFlavors() {
         assertDoesNotThrow(() -> {
             String token = createSystemToken();
             FlavorResult flavorList = computeService.getFlavors(token);
@@ -60,7 +76,16 @@ public class ComputeServiceTest {
     }
 
     @Test
-    public void test_002_listServers() {
+    public void test_0003_deleteFlavor() {
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            Flavor flavor = computeService.getFlavors(token).flavors.stream().filter(f -> f.name.equals(config.getFlavorName())).findFirst().get();
+            computeService.deleteFlavor(token, flavor.id);
+        });
+    }
+
+    @Test
+    public void test_0011_listServers() {
         assertDoesNotThrow(() -> {
             String token = createSystemToken();
             DomainResult domainResult = identityService.getDomains(token, config.getDomainName());

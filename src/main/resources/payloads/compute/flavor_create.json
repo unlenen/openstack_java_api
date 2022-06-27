@@ -1,0 +1,8 @@
+{
+    "flavor": {
+        "name": "${NAME}",
+        "ram": ${RAM},
+        "vcpus": ${VCPUS},
+        "disk": ${DISK}
+    }
+}

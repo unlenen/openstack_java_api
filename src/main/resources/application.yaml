@@ -28,3 +28,9 @@ testData:
             name: argela
             project:
                 name: main-project
+        flavor:
+            name: nebi-test1
+            vcpus: 2
+            ram: 4096
+            disk: 20
+            

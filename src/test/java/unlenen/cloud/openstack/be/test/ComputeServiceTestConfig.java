@@ -31,4 +31,17 @@ public class ComputeServiceTestConfig {
 
     @Value("${testData.compute_service.domain.project.name}")
     String projectName;
+
+    @Value("${testData.compute_service.flavor.name}")
+    String flavorName;
+
+    @Value("${testData.compute_service.flavor.vcpus}")
+    Integer flavorVcpus;
+
+    @Value("${testData.compute_service.flavor.ram}")
+    Integer flavorRam;
+
+    @Value("${testData.compute_service.flavor.disk}")
+    Integer flavorDisk;
+
 }
