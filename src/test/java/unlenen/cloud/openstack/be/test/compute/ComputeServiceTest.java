@@ -1,4 +1,4 @@
-package unlenen.cloud.openstack.be.test;
+package unlenen.cloud.openstack.be.test.compute;
 
 import org.junit.FixMethodOrder;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;

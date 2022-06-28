@@ -1,0 +1,5 @@
+{
+    "container_format": "${CONTAINER_FORMAT}",
+    "disk_format": "${DISK_FORMAT}",
+    "name": "${NAME}"
+}

@@ -33,4 +33,11 @@ testData:
             vcpus: 2
             ram: 4096
             disk: 20
+    image_service:
+        domain:
+            name: argela
+            project:
+                name: main-project
+        image:
+            name: ubuntuNebi
             

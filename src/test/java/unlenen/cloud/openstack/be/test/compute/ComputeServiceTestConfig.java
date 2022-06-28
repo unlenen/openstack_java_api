@@ -1,4 +1,4 @@
-package unlenen.cloud.openstack.be.test;
+package unlenen.cloud.openstack.be.test.compute;
 
 import lombok.Getter;
 import lombok.Setter;
