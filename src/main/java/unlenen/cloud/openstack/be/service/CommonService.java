@@ -42,7 +42,9 @@ public class CommonService {
     protected OpenStackResult callWithResult(String baseURL, Parameter[] extraHeaders, Parameter[] parameters) throws Exception {
         Call call = getCall();
         ResponseEntity responseEntity = callOpenStack(call, baseURL, extraHeaders, parameters);
-        return (OpenStackResult) objectMapper.readValue(responseEntity.getBody().toString(), call.openstackResult());
+        String body= responseEntity.getBody().toString();
+        System.out.println(body);
+        return (OpenStackResult) objectMapper.readValue(body, call.openstackResult());
     }
 
     protected ResponseEntity call(String baseURL, Parameter[] extraHeaders, Parameter[] parameters) throws Exception {

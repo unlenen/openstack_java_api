@@ -7,10 +7,12 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import unlenen.cloud.openstack.be.exception.UnvalidCallException;
 import unlenen.cloud.openstack.be.model.response.ErrorInfo;
 import unlenen.cloud.openstack.be.model.response.OpenStackResponse;
@@ -47,8 +49,7 @@ public class ComputeController {
             @PathVariable() Integer vcpus,
             @PathVariable() Integer ram,
             @PathVariable() Integer disk,
-            @RequestParam(required = false, name = "description", defaultValue = "") String description
-    ) {
+            @RequestParam(required = false, name = "description", defaultValue = "") String description) {
         OpenStackResponse openStackResponse = new OpenStackResponse();
         HttpStatus httpStatus;
         try {
@@ -63,8 +64,7 @@ public class ComputeController {
     @DeleteMapping("/flavor/{flavorId}")
     public ResponseEntity<OpenStackResponse> deleteFlavor(
             @RequestHeader("token") String token,
-            @PathVariable() String flavorId
-    ) {
+            @PathVariable() String flavorId) {
         OpenStackResponse openStackResponse = new OpenStackResponse();
         HttpStatus httpStatus;
         try {
@@ -76,6 +76,20 @@ public class ComputeController {
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
+    @GetMapping("/os-keypairs")
+    public ResponseEntity<OpenStackResponse> getKeypairs(@RequestHeader("token") String token,@RequestHeader("userId") String userId){
+    OpenStackResponse openStackResponse = new OpenStackResponse();
+    HttpStatus httpStatus;
+    try {
+        openStackResponse.setOpenStackResult(computeService.getKeypairs(token,userId));
+        httpStatus = HttpStatus.OK;
+    } catch (Exception e) {
+        httpStatus = handleError(openStackResponse, e);
+    }
+    return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
+    }
+
+    @PutMapping("/os-keypairs{name}/{type}/{public_key}/{user_id}")
     private HttpStatus handleError(OpenStackResponse openStackResponse, Exception e) {
         HttpStatus httpStatus;
         openStackResponse.setError(new ErrorInfo(e.getClass().getSimpleName(), e.getMessage()));
