@@ -129,4 +129,20 @@ public class ComputeService extends CommonService {
             }
        );
     }
+
+    @Call(type = HttpMethod.DELETE,
+    url = "/os-keypairs/{keypair_name}",
+    statusCode = HttpStatus.ACCEPTED
+    )
+    public void deleteKeypair(String token, String keypairName) throws Exception {
+        call(getServiceURL(token, OpenStackModule.compute),
+            new Parameter[]{
+                new Parameter(OpenStackHeader.TOKEN.getKey(), token)
+            },
+            new Parameter[]{
+                new Parameter("keypair_name", keypairName, ParameterType.URI)
+            }
+        );
+    }
+
 }

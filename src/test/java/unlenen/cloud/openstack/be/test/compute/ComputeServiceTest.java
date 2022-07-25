@@ -15,6 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import unlenen.cloud.openstack.be.Application;
 import unlenen.cloud.openstack.be.modules.compute.models.Flavor;
+import unlenen.cloud.openstack.be.modules.compute.models.Keypair;
 import unlenen.cloud.openstack.be.modules.compute.result.FlavorCreateResult;
 import unlenen.cloud.openstack.be.modules.compute.result.FlavorResult;
 import unlenen.cloud.openstack.be.modules.compute.result.KeypairCreateResult;
@@ -111,20 +112,29 @@ public class ComputeServiceTest {
 
             User user = userResult.users.get(0);
             KeypairResult keypairResult = computeService.getKeypairs(token, user.id);
-            
         });
     }
 
     @Test void test_0002_createKeypairs(){
         assertDoesNotThrow(() -> {
             String token = createSystemToken();
-            UserResult userResult = identityService.getUsers(token, null, config.getKeypairUserName(), null);
             KeypairCreateResult keypairCreateResult= computeService.createKeypair(
                     token,
                     config.getKeypairName(),
                     config.getKeypairPublic_Key()
                     );
             assert keypairCreateResult.keypair.name != null;
+        });
+    }
+    @Test
+    public void test_0003_deleteKeypair() {
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            UserResult userResult = identityService.getUsers(token, null, config.getKeypairUserName(), null);
+            User user = userResult.users.get(0);
+            Keypair keypair = computeService.getKeypairs(token,user.id).keypairs.stream()
+                    .filter(f -> f.keypair.name.equals(config.getKeypairName())).findFirst().get();
+            computeService.deleteKeypair(token, keypair.keypair.name);
         });
     }
 }
