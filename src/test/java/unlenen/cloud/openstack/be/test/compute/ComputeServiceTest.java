@@ -2,6 +2,8 @@ package unlenen.cloud.openstack.be.test.compute;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
+import java.security.KeyPair;
+
 import org.junit.FixMethodOrder;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -16,6 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import unlenen.cloud.openstack.be.Application;
 import unlenen.cloud.openstack.be.modules.compute.models.Flavor;
 import unlenen.cloud.openstack.be.modules.compute.models.Keypair;
+import unlenen.cloud.openstack.be.modules.compute.models.KeypairData;
 import unlenen.cloud.openstack.be.modules.compute.result.FlavorCreateResult;
 import unlenen.cloud.openstack.be.modules.compute.result.FlavorResult;
 import unlenen.cloud.openstack.be.modules.compute.result.KeypairCreateResult;
@@ -104,18 +107,9 @@ public class ComputeServiceTest {
         });
     }
 
-    @Test
-    public void test_0001_listKeypairs() {
-        assertDoesNotThrow(() -> {
-            String token = createSystemToken();
-            UserResult userResult = identityService.getUsers(token, null, config.getKeypairUserName(), null);
+ 
 
-            User user = userResult.users.get(0);
-            KeypairResult keypairResult = computeService.getKeypairs(token, user.id);
-        });
-    }
-
-    @Test void test_0002_createKeypairs(){
+    @Test void test_0021_createKeypairs(){
         assertDoesNotThrow(() -> {
             String token = createSystemToken();
             KeypairCreateResult keypairCreateResult= computeService.createKeypair(
@@ -126,8 +120,22 @@ public class ComputeServiceTest {
             assert keypairCreateResult.keypair.name != null;
         });
     }
+
     @Test
-    public void test_0003_deleteKeypair() {
+    public void test_0022_listKeypairs() {
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            UserResult userResult = identityService.getUsers(token, null, config.getKeypairUserName(), null);
+
+            User user = userResult.users.get(0);
+            KeypairResult keypairResult = computeService.getKeypairs(token, user.id);
+            KeypairData keyPair =  keypairResult.keypairs.stream().filter(k -> k.keypair.name.equals(config.getKeypairName())).findFirst().get().keypair ;
+            assert keyPair.name.equals(config.getKeypairName());
+        });
+    }
+
+    @Test
+    public void test_0023_deleteKeypair() {
         assertDoesNotThrow(() -> {
             String token = createSystemToken();
             UserResult userResult = identityService.getUsers(token, null, config.getKeypairUserName(), null);

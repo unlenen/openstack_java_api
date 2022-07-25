@@ -1,13 +1,18 @@
 package unlenen.cloud.openstack.be.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import unlenen.cloud.openstack.be.config.OpenStackConfig;
 import unlenen.cloud.openstack.be.constant.Call;
 import unlenen.cloud.openstack.be.constant.OpenStackModule;
@@ -21,6 +26,8 @@ import unlenen.cloud.openstack.be.model.result.OpenStackResult;
  */
 @Component
 public class CommonService {
+
+    Logger logger= LoggerFactory.getLogger(CommonService.class);
 
     @Autowired
     HttpService httpService;
@@ -43,7 +50,9 @@ public class CommonService {
         Call call = getCall();
         ResponseEntity responseEntity = callOpenStack(call, baseURL, extraHeaders, parameters);
         String body= responseEntity.getBody().toString();
-        System.out.println(body);
+        if(logger.isDebugEnabled()){
+            logger.debug("[Response] URL:"+ baseURL+" , headers:"+extraHeaders+" , parameters: "+ parameters+" , response:"+body);
+        }
         return (OpenStackResult) objectMapper.readValue(body, call.openstackResult());
     }
 
