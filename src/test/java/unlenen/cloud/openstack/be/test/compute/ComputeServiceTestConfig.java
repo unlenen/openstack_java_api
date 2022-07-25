@@ -44,4 +44,14 @@ public class ComputeServiceTestConfig {
     @Value("${testData.compute_service.flavor.disk}")
     Integer flavorDisk;
 
+    @Value("${testData.compute_service.keypair.name}")
+    String keypairName;
+
+    @Value("${testData.compute_service.keypair.public_key}")
+    String keypairPublic_Key;
+
+    @Value("${testData.compute_service.keypair.user.name}")
+    String keypairUserName;
+
+    
 }

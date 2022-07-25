@@ -102,6 +102,10 @@ public class HttpService {
             url = builder.build().encode().toUriString();
         }
         
+        if(log.isDebugEnabled()){
+            log.debug("[Request] URL:"+ url+" type:"+call.type());
+        }
+
         ResponseEntity<String> response;
         switch (call.type()) {
             case PATCH:
@@ -138,11 +142,7 @@ public class HttpService {
                 }
             }
         }
-        
-        if (log.isDebugEnabled()) {
-            log.debug("[HTTP][CALL][" + call.type() + "] url : " + call.url() + " parameters:" + parameters);
-        }
-        
+                
         switch (call.type()) {
             default:
             case GET:

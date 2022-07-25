@@ -1,0 +1,6 @@
+{
+    "keypair": {
+        "name": "${NAME}",
+        "public_key": "${PUBLIC_KEY}"
+    }
+}

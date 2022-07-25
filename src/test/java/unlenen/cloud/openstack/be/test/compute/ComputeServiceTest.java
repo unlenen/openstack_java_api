@@ -1,7 +1,10 @@
 package unlenen.cloud.openstack.be.test.compute;
 
-import org.junit.FixMethodOrder;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
+import java.security.KeyPair;
+
+import org.junit.FixMethodOrder;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -11,15 +14,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+
 import unlenen.cloud.openstack.be.Application;
 import unlenen.cloud.openstack.be.modules.compute.models.Flavor;
+import unlenen.cloud.openstack.be.modules.compute.models.Keypair;
+import unlenen.cloud.openstack.be.modules.compute.models.KeypairData;
 import unlenen.cloud.openstack.be.modules.compute.result.FlavorCreateResult;
 import unlenen.cloud.openstack.be.modules.compute.result.FlavorResult;
+import unlenen.cloud.openstack.be.modules.compute.result.KeypairCreateResult;
+import unlenen.cloud.openstack.be.modules.compute.result.KeypairResult;
 import unlenen.cloud.openstack.be.modules.compute.result.ServerResult;
 import unlenen.cloud.openstack.be.modules.compute.service.ComputeService;
+import unlenen.cloud.openstack.be.modules.identity.models.User;
 import unlenen.cloud.openstack.be.modules.identity.result.DomainResult;
 import unlenen.cloud.openstack.be.modules.identity.result.LoginResult;
 import unlenen.cloud.openstack.be.modules.identity.result.ProjectResult;
+import unlenen.cloud.openstack.be.modules.identity.result.UserResult;
 import unlenen.cloud.openstack.be.modules.identity.service.IdentityService;
 
 /**
@@ -79,7 +89,8 @@ public class ComputeServiceTest {
     public void test_0003_deleteFlavor() {
         assertDoesNotThrow(() -> {
             String token = createSystemToken();
-            Flavor flavor = computeService.getFlavors(token).flavors.stream().filter(f -> f.name.equals(config.getFlavorName())).findFirst().get();
+            Flavor flavor = computeService.getFlavors(token).flavors.stream()
+                    .filter(f -> f.name.equals(config.getFlavorName())).findFirst().get();
             computeService.deleteFlavor(token, flavor.id);
         });
     }
@@ -89,10 +100,51 @@ public class ComputeServiceTest {
         assertDoesNotThrow(() -> {
             String token = createSystemToken();
             DomainResult domainResult = identityService.getDomains(token, config.getDomainName());
-            ProjectResult projectResult = identityService.getProjects(token, domainResult.domains.get(0).id, config.getProjectName());
+            ProjectResult projectResult = identityService.getProjects(token, domainResult.domains.get(0).id,
+                    config.getProjectName());
             ServerResult serverResult = computeService.getServers(token, projectResult.projects.get(0).id);
             assert !serverResult.servers.isEmpty();
         });
     }
 
+ 
+
+    @Test void test_0021_createKeypairs(){
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            KeypairCreateResult keypairCreateResult= computeService.createKeypair(
+                    token,
+                    config.getKeypairName(),
+                    config.getKeypairPublic_Key()
+                    );
+            assert keypairCreateResult.keypair.name != null;
+        });
+    }
+
+    @Test
+    public void test_0022_listKeypairs() {
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            UserResult userResult = identityService.getUsers(token, null, config.getKeypairUserName(), null);
+
+            User user = userResult.users.get(0);
+            KeypairResult keypairResult = computeService.getKeypairs(token, user.id);
+            KeypairData keyPair =  keypairResult.keypairs.stream().filter(k -> k.keypair.name.equals(config.getKeypairName())).findFirst().get().keypair ;
+            assert keyPair.name.equals(config.getKeypairName());
+        });
+    }
+
+    @Test
+    public void test_0023_deleteKeypair() {
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            UserResult userResult = identityService.getUsers(token, null, config.getKeypairUserName(), null);
+            User user = userResult.users.get(0);
+            Keypair keypair = computeService.getKeypairs(token,user.id).keypairs.stream()
+                    .filter(f -> f.keypair.name.equals(config.getKeypairName())).findFirst().get();
+            computeService.deleteKeypair(token, keypair.keypair.name);
+        });
+    }
 }
+
+

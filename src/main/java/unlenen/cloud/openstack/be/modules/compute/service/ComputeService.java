@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
 import unlenen.cloud.openstack.be.config.OpenStackConfig;
 import unlenen.cloud.openstack.be.constant.Call;
 import unlenen.cloud.openstack.be.constant.OpenStackHeader;
@@ -12,6 +13,8 @@ import unlenen.cloud.openstack.be.constant.Parameter;
 import unlenen.cloud.openstack.be.constant.ParameterType;
 import unlenen.cloud.openstack.be.modules.compute.result.FlavorCreateResult;
 import unlenen.cloud.openstack.be.modules.compute.result.FlavorResult;
+import unlenen.cloud.openstack.be.modules.compute.result.KeypairCreateResult;
+import unlenen.cloud.openstack.be.modules.compute.result.KeypairResult;
 import unlenen.cloud.openstack.be.modules.compute.result.ServerResult;
 import unlenen.cloud.openstack.be.service.CommonService;
 
@@ -91,4 +94,55 @@ public class ComputeService extends CommonService {
         );
 
     }
+    
+    @Call(type = HttpMethod.GET,
+            url = "/os-keypairs",
+            statusCode = HttpStatus.OK,
+            openstackResult = KeypairResult.class
+    )
+    public KeypairResult getKeypairs(String token,String userId) throws Exception {
+        return (KeypairResult)callWithResult(getServiceURL(token, OpenStackModule.compute),
+                new Parameter[]{
+                    new Parameter(OpenStackHeader.TOKEN.getKey(), token)
+                },
+                new Parameter[]{
+                    new Parameter("user_id", userId, ParameterType.REQUEST),
+                }
+        );
+    }
+
+    
+    @Call(type = HttpMethod.POST,
+            url= "/os-keypairs",
+            bodyFile = "payloads/compute/keypair_create.json",
+            statusCode = HttpStatus.OK,
+            openstackResult = KeypairCreateResult.class
+    )
+    public KeypairCreateResult createKeypair(String token,String name, String public_key )throws Exception{
+        return (KeypairCreateResult) callWithResult(getServiceURL(token, OpenStackModule.compute),
+            new Parameter[]{
+                new Parameter(OpenStackHeader.TOKEN.getKey(), token)
+            },
+            new Parameter[]{
+                new Parameter("NAME", name, ParameterType.JSON),
+                new Parameter("PUBLIC_KEY", public_key , ParameterType.JSON),    
+            }
+       );
+    }
+
+    @Call(type = HttpMethod.DELETE,
+    url = "/os-keypairs/{keypair_name}",
+    statusCode = HttpStatus.ACCEPTED
+    )
+    public void deleteKeypair(String token, String keypairName) throws Exception {
+        call(getServiceURL(token, OpenStackModule.compute),
+            new Parameter[]{
+                new Parameter(OpenStackHeader.TOKEN.getKey(), token)
+            },
+            new Parameter[]{
+                new Parameter("keypair_name", keypairName, ParameterType.URI)
+            }
+        );
+    }
+
 }

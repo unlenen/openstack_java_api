@@ -1,3 +1,11 @@
+logging:
+    level:
+        unlenen:
+            cloud:
+                openstack:
+                    be: DEBUG
+
+
 openstack:
     keystone:
         url: https://os2-nfvlab.argela.com.tr:5000/v3
@@ -9,10 +17,10 @@ openstack:
             
 testData:
     system_user:
-        name: argela_admin
+        name: cloud-admin
         password: argela
-        domain: default
-        project: argela_admin
+        domain: argela
+        project: main-project
     
     identity_service:
         domain:
@@ -33,6 +41,11 @@ testData:
             vcpus: 2
             ram: 4096
             disk: 20
+        keypair:
+            name: nebi-test7
+            public_key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC/I0hra2R3jo0V2CMiICefTPk8WK99n3RfqCBxESfhqxgmP8mfX1J3GY/h/4wwNy1ZwZQzCW4085oAK3Y+AdKh/blwd+2N/FExsqI/I5tHE3nMdqFP947OndLMcN8jiSaCzE1c31eKuIyng3YvOAAD9ac3glshCv+r27H35x5YXXf68RPtbhpAj914IMsYmarDWGiUadq3z9bRmZmt30I6xYvG8Z98DrWgqaIJJb0fB16mbiUggrCudqwDGfqPWxN/MwJvnnCeBt9mzH6TxkSGAbLYnRSLhdFD3jP30mGA8nLHK09GiujgkAraxms+Ouzp8ykquZrYDoKsQ/K+meiejCL2VLc5hW6lRRA07MV4vI1hz73jLfO5P9rrcbTN9Q8jA83A99uqUKjapl7TLMl9bcSkFSUWiXE6nURp+yOkK2eViBibt3C3cv/Rti5XX+j0Y0Z71P65OKzbR0XLIqX7BMzWpyssi03ziKu+kge5L82XyqoydQcP+ysDVZ8D8lM= argela@argela-HP-EliteBook-840-G2
+            user:
+                name: cloud-admin
     image_service:
         domain:
             name: argela
