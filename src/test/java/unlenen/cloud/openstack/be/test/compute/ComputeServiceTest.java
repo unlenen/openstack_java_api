@@ -2,8 +2,9 @@ package unlenen.cloud.openstack.be.test.compute;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import java.security.KeyPair;
+import java.lang.reflect.Field;
 
+import org.json.JSONObject;
 import org.junit.FixMethodOrder;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -19,15 +20,19 @@ import unlenen.cloud.openstack.be.Application;
 import unlenen.cloud.openstack.be.modules.compute.models.Flavor;
 import unlenen.cloud.openstack.be.modules.compute.models.Keypair;
 import unlenen.cloud.openstack.be.modules.compute.models.KeypairData;
+import unlenen.cloud.openstack.be.modules.compute.models.Quota;
 import unlenen.cloud.openstack.be.modules.compute.result.FlavorCreateResult;
 import unlenen.cloud.openstack.be.modules.compute.result.FlavorResult;
 import unlenen.cloud.openstack.be.modules.compute.result.KeypairCreateResult;
 import unlenen.cloud.openstack.be.modules.compute.result.KeypairResult;
+import unlenen.cloud.openstack.be.modules.compute.result.QuotaResult;
 import unlenen.cloud.openstack.be.modules.compute.result.ServerResult;
 import unlenen.cloud.openstack.be.modules.compute.service.ComputeService;
+import unlenen.cloud.openstack.be.modules.identity.models.Project;
 import unlenen.cloud.openstack.be.modules.identity.models.User;
 import unlenen.cloud.openstack.be.modules.identity.result.DomainResult;
 import unlenen.cloud.openstack.be.modules.identity.result.LoginResult;
+import unlenen.cloud.openstack.be.modules.identity.result.ProjectCreateResult;
 import unlenen.cloud.openstack.be.modules.identity.result.ProjectResult;
 import unlenen.cloud.openstack.be.modules.identity.result.UserResult;
 import unlenen.cloud.openstack.be.modules.identity.service.IdentityService;
@@ -129,8 +134,8 @@ public class ComputeServiceTest {
 
             User user = userResult.users.get(0);
             KeypairResult keypairResult = computeService.getKeypairs(token, user.id);
-            KeypairData keyPair =  keypairResult.keypairs.stream().filter(k -> k.keypair.name.equals(config.getKeypairName())).findFirst().get().keypair ;
-            assert keyPair.name.equals(config.getKeypairName());
+            KeypairData keypair =  keypairResult.keypairs.stream().filter(k -> k.keypair.name.equals(config.getKeypairName())).findFirst().get().keypair ;
+            assert keypair.name.equals(config.getKeypairName());
         });
     }
 
@@ -144,6 +149,91 @@ public class ComputeServiceTest {
                     .filter(f -> f.keypair.name.equals(config.getKeypairName())).findFirst().get();
             computeService.deleteKeypair(token, keypair.keypair.name);
         });
+    }
+
+    @Test
+    public void test_0031_showQuota(){
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            DomainResult domainResult = identityService.getDomains(token, config.getQuotaDomainName());
+            ProjectResult projects=  identityService.getProjects(token, domainResult.domains.get(0).id, config.getQuotaProjectName());
+            Project project ;
+            if(projects.projects.isEmpty()){
+                ProjectCreateResult projectCreateResult = identityService.createProject(
+                    token,
+                    config.getQuotaProjectName(),
+                    "",
+                    domainResult.domains.get(0).id);
+                    project = projectCreateResult.project;
+            }else{
+                project = projects.projects.get(0);
+            }
+            try{
+        
+            QuotaResult quotaResult=computeService.getQuota(token, project.id);
+            assert quotaResult.quota != null;
+            }finally{
+                identityService.deleteProject(token, project.id);
+            }
+        });
+    }
+
+    @Test
+    public void test_0032_updateQuota(){
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            DomainResult domainResult = identityService.getDomains(token, config.getQuotaDomainName());
+            ProjectResult projects=  identityService.getProjects(token, domainResult.domains.get(0).id, config.getQuotaProjectName());
+            Project project ;
+            if(projects.projects.isEmpty()){
+                ProjectCreateResult projectCreateResult = identityService.createProject(
+                    token,
+                    config.getQuotaProjectName(),
+                    "",
+                    domainResult.domains.get(0).id);
+                    project = projectCreateResult.project;
+            }else{
+                project = projects.projects.get(0);
+            }
+            try{
+        
+            QuotaResult quotaResult=computeService.getQuota(token, project.id);
+            assert quotaResult.quota != null;
+            Quota quota= new Quota();
+            quota.setCores(50);
+            quota.setRam(2048*50);
+            QuotaResult quotaResultNew=computeService.getQuota(token, project.id);
+            assert quotaResultNew.quota != null;
+        
+            computeService.updateQuota(token, project.id, quota);
+            }finally{
+                identityService.deleteProject(token, project.id);
+            }
+        });
+    }
+
+
+
+
+    @Test
+    public void test() throws Exception{
+
+        Quota hzKota = new Quota();
+        hzKota.setCores(5);
+        hzKota.setInstances(10);
+
+        JSONObject root = new JSONObject();
+        JSONObject quota_set = new JSONObject();
+        root.put("quota_set", quota_set);
+
+        for (Field field : hzKota.getClass().getDeclaredFields()){
+            String name = field.getName();
+            Object val = field.get(hzKota);
+            if(val!=null)
+            quota_set.put(name, val);
+            }
+    
+        System.out.println(root);
     }
 }
 

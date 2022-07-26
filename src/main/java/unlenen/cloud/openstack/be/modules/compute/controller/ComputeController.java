@@ -2,12 +2,14 @@ package unlenen.cloud.openstack.be.modules.compute.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import unlenen.cloud.openstack.be.exception.UnvalidCallException;
 import unlenen.cloud.openstack.be.model.response.ErrorInfo;
 import unlenen.cloud.openstack.be.model.response.OpenStackResponse;
+import unlenen.cloud.openstack.be.modules.compute.models.Quota;
 import unlenen.cloud.openstack.be.modules.compute.service.ComputeService;
 
 /**
@@ -121,7 +124,32 @@ public class ComputeController {
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
-    @PutMapping("/os-keypairs{name}/{type}/{public_key}/{user_id}")
+    @GetMapping("/os-quota-sets/{tenant_id}")
+    public ResponseEntity<OpenStackResponse> getQuota(@RequestHeader("token") String token,@PathVariable() String tenant_id){
+        OpenStackResponse openStackResponse = new OpenStackResponse();
+        HttpStatus httpStatus;
+        try {
+            openStackResponse.setOpenStackResult(computeService.getQuota(token, tenant_id));
+            httpStatus = HttpStatus.OK;
+        } catch (Exception e) {
+            httpStatus = handleError(openStackResponse, e);
+        }
+        return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
+    }
+    
+    @PutMapping("/os-quota-sets/{tenant_id}" )
+    public ResponseEntity<OpenStackResponse> updateQuota(@RequestHeader("token") String token,@PathVariable() String tenant_id,@RequestBody Quota quota){
+        OpenStackResponse openStackResponse = new OpenStackResponse();
+        HttpStatus httpStatus;
+        try {
+            openStackResponse.setOpenStackResult(computeService.updateQuota(token, tenant_id,quota));
+            httpStatus = HttpStatus.OK;
+        } catch (Exception e) {
+            httpStatus = handleError(openStackResponse, e);
+        }
+        return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
+    }
+
     private HttpStatus handleError(OpenStackResponse openStackResponse, Exception e) {
         HttpStatus httpStatus;
         openStackResponse.setError(new ErrorInfo(e.getClass().getSimpleName(), e.getMessage()));

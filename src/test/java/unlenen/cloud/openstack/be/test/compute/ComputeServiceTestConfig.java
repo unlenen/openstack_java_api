@@ -53,5 +53,11 @@ public class ComputeServiceTestConfig {
     @Value("${testData.compute_service.keypair.user.name}")
     String keypairUserName;
 
+    @Value("${testData.compute_service.quota.domain}")
+    String quotaDomainName;
+
+    @Value("${testData.compute_service.quota.project}")
+    String quotaProjectName;
+
     
 }
