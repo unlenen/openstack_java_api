@@ -89,6 +89,38 @@ public class ComputeController {
     return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
+    @PostMapping("/os-keypairs")
+    public ResponseEntity<OpenStackResponse> createKeypair(
+        @RequestHeader("token") String token,
+        @PathVariable() String name,
+        @PathVariable() String public_key,
+        @RequestParam(required = false, name = "description", defaultValue = "") String description) {
+    OpenStackResponse openStackResponse = new OpenStackResponse();
+    HttpStatus httpStatus;
+    try {
+        openStackResponse.setOpenStackResult(computeService.createKeypair(token, name, public_key));
+        httpStatus = HttpStatus.CREATED;
+    } catch (Exception e) {
+        httpStatus = handleError(openStackResponse, e);
+    }
+    return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
+    }
+
+    @DeleteMapping("/os-keypairs/{keypair_name}")
+    public ResponseEntity<OpenStackResponse> deleteKeypair(
+            @RequestHeader("token") String token,
+            @PathVariable() String keypairName) {
+        OpenStackResponse openStackResponse = new OpenStackResponse();
+        HttpStatus httpStatus;
+        try {
+            computeService.deleteKeypair(token, keypairName);
+            httpStatus = HttpStatus.NO_CONTENT;
+        } catch (Exception e) {
+            httpStatus = handleError(openStackResponse, e);
+        }
+        return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
+    }
+
     @PutMapping("/os-keypairs{name}/{type}/{public_key}/{user_id}")
     private HttpStatus handleError(OpenStackResponse openStackResponse, Exception e) {
         HttpStatus httpStatus;
