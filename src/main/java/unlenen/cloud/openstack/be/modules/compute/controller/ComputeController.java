@@ -150,10 +150,6 @@ public class ComputeController {
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
-
-
-
-    @PutMapping("/os-keypairs{name}/{type}/{public_key}/{user_id}")
     private HttpStatus handleError(OpenStackResponse openStackResponse, Exception e) {
         HttpStatus httpStatus;
         openStackResponse.setError(new ErrorInfo(e.getClass().getSimpleName(), e.getMessage()));
