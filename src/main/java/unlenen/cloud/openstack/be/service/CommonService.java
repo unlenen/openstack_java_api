@@ -47,8 +47,12 @@ public class CommonService {
     }
 
     protected OpenStackResult callWithResult(String baseURL, Parameter[] extraHeaders, Parameter[] parameters) throws Exception {
-        Call call = getCall();
-        ResponseEntity responseEntity = callOpenStack(call, baseURL, extraHeaders, parameters);
+        return callWithResult(baseURL, extraHeaders, parameters, null);
+    }
+
+    protected OpenStackResult callWithResult(String baseURL, Parameter[] extraHeaders, Parameter[] parameters,String reqBody) throws Exception {
+        Call call = getCall(reqBody ==null ?4:3);
+        ResponseEntity responseEntity = callOpenStack(call, baseURL, extraHeaders, parameters,reqBody);
         String body= responseEntity.getBody().toString();
         if(logger.isDebugEnabled()){
             logger.debug("[Response] URL:"+ baseURL+" , headers:"+extraHeaders+" , parameters: "+ parameters+" , response:"+body);
@@ -57,12 +61,12 @@ public class CommonService {
     }
 
     protected ResponseEntity call(String baseURL, Parameter[] extraHeaders, Parameter[] parameters) throws Exception {
-        Call call = getCall();
-        return callOpenStack(call, baseURL, extraHeaders, parameters);
+        Call call = getCall(3);
+        return callOpenStack(call, baseURL, extraHeaders, parameters,null);
     }
 
-    private ResponseEntity callOpenStack(Call call, String baseURL, Parameter[] extraHeaders, Parameter[] parameters) throws IOException, UnvalidCallException {
-        ResponseEntity responseEntity = httpService.call(call, baseURL, extraHeaders, parameters);
+    private ResponseEntity callOpenStack(Call call, String baseURL, Parameter[] extraHeaders, Parameter[] parameters,String reqBody) throws IOException, UnvalidCallException {
+        ResponseEntity responseEntity = httpService.call(call, baseURL, extraHeaders, parameters,reqBody);
         if (responseEntity.getStatusCode() != call.statusCode()) {
             throw new UnvalidCallException(responseEntity.getStatusCode(), call.statusCode(), responseEntity.getBody() + "");
         }
@@ -77,9 +81,9 @@ public class CommonService {
         return null;
     }
 
-    private Call getCall() throws ClassNotFoundException, SecurityException {
-        String methodName = Thread.currentThread().getStackTrace()[3].getMethodName();
-        Class serviceClass = Class.forName(Thread.currentThread().getStackTrace()[3].getClassName());
+    private Call getCall(int pos) throws ClassNotFoundException, SecurityException {
+        String methodName = Thread.currentThread().getStackTrace()[pos].getMethodName();
+        Class serviceClass = Class.forName(Thread.currentThread().getStackTrace()[pos].getClassName());
         Method method = Arrays.stream(serviceClass.getDeclaredMethods()).filter(t -> t.getName().equals(methodName)).findFirst().get();
         return method.getAnnotation(Call.class);
     }

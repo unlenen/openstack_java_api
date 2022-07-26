@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -12,6 +13,7 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
@@ -25,6 +27,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+
 import unlenen.cloud.openstack.be.constant.Call;
 import unlenen.cloud.openstack.be.constant.Header;
 import unlenen.cloud.openstack.be.constant.Parameter;
@@ -130,7 +133,7 @@ public class HttpService {
         return commonCall(call, baseURL, requestEntity, parameters);
     }
     
-    public ResponseEntity call(Call call, String baseURL, Parameter[] extraHeaders, Parameter[] parameters) throws IOException {
+    public ResponseEntity call(Call call, String baseURL, Parameter[] extraHeaders, Parameter[] parameters,String reqBody) throws IOException {
         
         HttpHeaders headers = prepareHeaders(call, extraHeaders);
         
@@ -141,6 +144,10 @@ public class HttpService {
                     data = enrichPayloadData(readResourceFileToString(call.bodyFile()), parameters);
                 }
             }
+        }
+
+        if(reqBody!=null){
+            data= reqBody;
         }
                 
         switch (call.type()) {
