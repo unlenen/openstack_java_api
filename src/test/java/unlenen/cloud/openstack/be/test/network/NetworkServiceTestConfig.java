@@ -21,6 +21,9 @@ public class NetworkServiceTestConfig {
     @Value("${testData.system_user.password}")
     String systemPassword;
 
+    @Value("${testData.network_service.security_group.security_group_rules.id:}")
+    String securityGroupRulesId;
+
     @Value("${testData.network_service.security_group.security_group_rules.security_group_id:}")
     String securityGroupRulesGroupId;
     

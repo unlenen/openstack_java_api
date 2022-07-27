@@ -13,7 +13,6 @@ import unlenen.cloud.openstack.be.constant.Parameter;
 import unlenen.cloud.openstack.be.constant.ParameterType;
 import unlenen.cloud.openstack.be.modules.network.models.SecurityGroupRuleRoot;
 import unlenen.cloud.openstack.be.modules.network.result.SecurityGroupRuleCreateResult;
-import unlenen.cloud.openstack.be.modules.network.result.SecurityGroupRuleResult;
 import unlenen.cloud.openstack.be.modules.network.result.SecurityGroupRulesResult;
 import unlenen.cloud.openstack.be.service.CommonService;
 
@@ -36,7 +35,8 @@ public class NetworkService extends CommonService {
         public SecurityGroupRuleCreateResult createSecurityGroupRules(String token,
                         SecurityGroupRuleRoot securityGroupRuleRoot) throws Exception {
 
-                return (SecurityGroupRuleCreateResult) callWithResult(getServiceURL(token, OpenStackModule.network),
+                return (SecurityGroupRuleCreateResult) callWithResult(getServiceURL(token,
+                                OpenStackModule.network),
                                 new Parameter[] {
                                                 new Parameter(OpenStackHeader.TOKEN.getKey(), token)
                                 },
@@ -44,16 +44,17 @@ public class NetworkService extends CommonService {
                                 securityGroupRuleRoot);
         }
 
-        @Call(type = HttpMethod.GET, url = "/v2.0/security-group-rules/{security_group_rule_id}", statusCode = HttpStatus.OK, openstackResult = SecurityGroupRuleResult.class)
-        public SecurityGroupRuleResult showSecurityGroupRule(String token, String securityGroupRuleId)
-                        throws Exception {
-                return (SecurityGroupRuleResult) callWithResult(getServiceURL(token, OpenStackModule.network),
+        @Call(type = HttpMethod.DELETE, url = "/v2.0/security-group-rules/{security_group_rule_id}", statusCode = HttpStatus.NO_CONTENT)
+
+        public void deleteSecurityGroupRule(String token, String security_group_rule_id) throws Exception {
+                call(getServiceURL(token, OpenStackModule.network),
                                 new Parameter[] {
                                                 new Parameter(OpenStackHeader.TOKEN.getKey(), token)
                                 },
                                 new Parameter[] {
-                                                new Parameter("security_group_rule_id", securityGroupRuleId,
+                                                new Parameter("security_group_rule_id", security_group_rule_id,
                                                                 ParameterType.URI)
                                 });
         }
+
 }
