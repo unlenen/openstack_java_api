@@ -31,6 +31,7 @@ testData:
                 test1:
                     name: nebi_user_10
                     password: argela
+                    
     compute_service:
         domain:
             name: argela
@@ -58,4 +59,14 @@ testData:
                 name: main-project
         image:
             name: ubuntuNebi
+
+    network_service:
+        security_group:
+            name: onurcan
+            security_group_rules:
+                id: a0e19d95-a240-45f5-bf1f-dbf27027ab9d
+                direction: ingress
+                protocol: tcp
+                security_group_id: 7decf953-aa76-458b-aedc-90c2ef9c23a6
+
             
