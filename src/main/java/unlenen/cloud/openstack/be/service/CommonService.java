@@ -1,6 +1,7 @@
 package unlenen.cloud.openstack.be.service;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
@@ -18,6 +19,7 @@ import unlenen.cloud.openstack.be.constant.Call;
 import unlenen.cloud.openstack.be.constant.OpenStackModule;
 import unlenen.cloud.openstack.be.constant.Parameter;
 import unlenen.cloud.openstack.be.exception.UnvalidCallException;
+import unlenen.cloud.openstack.be.model.request.OpenStackRequest;
 import unlenen.cloud.openstack.be.model.result.OpenStackResult;
 
 /**
@@ -47,11 +49,16 @@ public class CommonService {
     }
 
     protected OpenStackResult callWithResult(String baseURL, Parameter[] extraHeaders, Parameter[] parameters) throws Exception {
-        return callWithResult(baseURL, extraHeaders, parameters, null);
+        return callWithResult(baseURL, extraHeaders, parameters, (String)null,4);
     }
 
-    protected OpenStackResult callWithResult(String baseURL, Parameter[] extraHeaders, Parameter[] parameters,String reqBody) throws Exception {
-        Call call = getCall(reqBody ==null ?4:3);
+    protected OpenStackResult callWithResult(String baseURL, Parameter[] extraHeaders, Parameter[] parameters,OpenStackRequest objectRequest) throws Exception {
+        return callWithResult(baseURL, extraHeaders, parameters, getObjectMapper().writeValueAsString(objectRequest),4);
+    }
+
+    protected OpenStackResult callWithResult(String baseURL, Parameter[] extraHeaders, Parameter[] parameters,String reqBody,int index) throws Exception {
+        Call call = getCall(index);
+        System.out.println(reqBody);
         ResponseEntity responseEntity = callOpenStack(call, baseURL, extraHeaders, parameters,reqBody);
         String body= responseEntity.getBody().toString();
         if(logger.isDebugEnabled()){

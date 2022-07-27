@@ -145,6 +145,7 @@ public class ComputeService extends CommonService {
                 new Parameter[] {
                         new Parameter("tenant_id", tenant_id, ParameterType.URI),
                 },
-                root.toString());
+                root.toString(),
+                3);
     }
 }

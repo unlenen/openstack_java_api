@@ -58,4 +58,12 @@ testData:
                 name: main-project
         image:
             name: ubuntuNebi
+    network_service:
+        security_group:
+            name: onurcan
+            security_group_rules:
+                direction: ingress
+                protocol: tcp
+                security_group_id: 7decf953-aa76-458b-aedc-90c2ef9c23a6
+
             
