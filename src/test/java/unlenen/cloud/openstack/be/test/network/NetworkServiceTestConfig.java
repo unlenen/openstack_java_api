@@ -21,15 +21,24 @@ public class NetworkServiceTestConfig {
     @Value("${testData.system_user.password}")
     String systemPassword;
 
-    @Value("${testData.network_service.security_group.security_group_rules.id:}")
+    @Value("${testData.network_service.security_group.name:}")
+    String securityGroupName;
+
+    @Value("${testData.network_service.security_group.id}")
+    String securityGroupId;
+
+    @Value("${testData.network_service.security_group.project_id}")
+    String securityGroupProjectId;
+
+    @Value("${testData.network_service.security_group.security_group_rules.id}")
     String securityGroupRulesId;
 
-    @Value("${testData.network_service.security_group.security_group_rules.security_group_id:}")
+    @Value("${testData.network_service.security_group.security_group_rules.security_group_id}")
     String securityGroupRulesGroupId;
     
-    @Value("${testData.network_service.security_group.security_group_rules.direction:}")
+    @Value("${testData.network_service.security_group.security_group_rules.direction}")
     String securityGroupRulesDirection;
 
-    @Value("${testData.network_service.security_group.security_group_rules.protocol:}")
+    @Value("${testData.network_service.security_group.security_group_rules.protocol}")
     String securityGroupRulesProtocol;
 }
