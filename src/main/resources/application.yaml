@@ -63,10 +63,12 @@ testData:
     network_service:
         security_group:
             name: onurcan
+            project_id: d84321cc8bb04e30a6d04d4ca0b75c7a
+            id: 8b679597-1497-4cb5-be0f-679650adf023
             security_group_rules:
-                id: a0e19d95-a240-45f5-bf1f-dbf27027ab9d
+                id: 8f57ac06-92fc-43dc-8f9d-f12a2291ccfd
                 direction: ingress
                 protocol: tcp
-                security_group_id: 7decf953-aa76-458b-aedc-90c2ef9c23a6
+                security_group_id: 5f54d437-554f-4b25-a5aa-544053c39bd4
 
             

@@ -16,6 +16,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import unlenen.cloud.openstack.be.Application;
 import unlenen.cloud.openstack.be.modules.identity.result.LoginResult;
 import unlenen.cloud.openstack.be.modules.identity.service.IdentityService;
+import unlenen.cloud.openstack.be.modules.network.models.SecurityGroup;
+import unlenen.cloud.openstack.be.modules.network.models.SecurityGroupRoot;
 import unlenen.cloud.openstack.be.modules.network.models.SecurityGroupRule;
 import unlenen.cloud.openstack.be.modules.network.models.SecurityGroupRuleRoot;
 import unlenen.cloud.openstack.be.modules.network.result.SecurityGroupRulesResult;
@@ -81,4 +83,35 @@ public class NetworkServiceTest {
             networkService.deleteSecurityGroupRule(token, config.getSecurityGroupRulesId());
         });
     }
+
+    @Test
+    public void test_0011_createSecurityGroup() {
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            SecurityGroupRoot securityGroupRoot= new SecurityGroupRoot();
+            SecurityGroup securityGroup= new SecurityGroup();
+            securityGroup.setName(config.getSecurityGroupName());
+            securityGroup.setProject_id(config.getSecurityGroupProjectId());
+            securityGroup.setTenant_id(config.getSecurityGroupProjectId());
+            securityGroupRoot.security_group=securityGroup;
+            networkService.createSecurityGroup(token,securityGroupRoot);
+        });
+    }
+
+    @Test
+    public void test_0012_listSecurityGroups() {
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            assert networkService.getSecurityGroups(token)!=null;
+        });
+    }
+
+    @Test
+    public void test_0013_deleteSecurityGroup() {
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            networkService.deleteSecurityGroup(token, config.getSecurityGroupId());
+        });
+    }
+
 }

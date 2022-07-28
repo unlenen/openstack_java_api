@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import unlenen.cloud.openstack.be.exception.UnvalidCallException;
 import unlenen.cloud.openstack.be.model.response.ErrorInfo;
 import unlenen.cloud.openstack.be.model.response.OpenStackResponse;
+import unlenen.cloud.openstack.be.modules.network.models.SecurityGroupRoot;
 import unlenen.cloud.openstack.be.modules.network.models.SecurityGroupRuleRoot;
 import unlenen.cloud.openstack.be.modules.network.service.NetworkService;
 
@@ -66,6 +67,49 @@ public class NetworkController {
         }
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
+
+    @GetMapping("/v2.0/security-groups")
+    public ResponseEntity<OpenStackResponse> getSecurityGroups(@RequestHeader("token") String token) {
+        OpenStackResponse openStackResponse = new OpenStackResponse();
+        HttpStatus httpStatus;
+        try {
+            openStackResponse.setOpenStackResult(networkService.getSecurityGroups(token));
+            httpStatus = HttpStatus.OK;
+        } catch (Exception e) {
+            httpStatus = handleError(openStackResponse, e);
+        }
+        return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
+    }
+
+    @PostMapping("/v2.0/security-groups")
+    public ResponseEntity<OpenStackResponse> createSecurityGroup(@RequestHeader("token") String token,
+            @RequestBody SecurityGroupRoot securityGroupRoot) {
+        OpenStackResponse openStackResponse = new OpenStackResponse();
+        HttpStatus httpStatus;
+        try {
+            openStackResponse.setOpenStackResult(networkService.createSecurityGroup(token, securityGroupRoot));
+            httpStatus = HttpStatus.CREATED;
+        } catch (Exception e) {
+            httpStatus = handleError(openStackResponse, e);
+        }
+        return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
+    }
+
+    @DeleteMapping("//v2.0/security-groups/{security_group_id}")
+    public ResponseEntity<OpenStackResponse> deleteSecurityGroup(
+            @RequestHeader("token") String token,
+            @PathVariable() String security_group_id) {
+        OpenStackResponse openStackResponse = new OpenStackResponse();
+        HttpStatus httpStatus;
+        try {
+            networkService.deleteSecurityGroup(token, security_group_id);
+            httpStatus = HttpStatus.NO_CONTENT;
+        } catch (Exception e) {
+            httpStatus = handleError(openStackResponse, e);
+        }
+        return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
+    }
+
 
     private HttpStatus handleError(OpenStackResponse openStackResponse, Exception e) {
         HttpStatus httpStatus;
