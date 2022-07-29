@@ -70,5 +70,27 @@ testData:
                 direction: ingress
                 protocol: tcp
                 security_group_id: 5f54d437-554f-4b25-a5aa-544053c39bd4
+        network:
+            id: ca223668-5cd3-4864-874b-e9616a7c1166
+            name: onurcan-test
+            shared: false
+            router_external: false
+            provider_network_type: vxlan
+            description: hello
+            mtu: 1450
+            admin_state_up: true
+            port_security_enabled: false
+        subnet:
+            id: 9b502d5f-cd78-4946-a84c-0fab338537ab
+            name: onurcan-test
+            network_id: ca223668-5cd3-4864-874b-e9616a7c1166
+            ip_version: 4
+            cidr: 10.10.0.0/24
+            allocation_pool_start: 10.10.0.2
+            allocation_pool_end: 10.10.0.254
+            gateaway_ip: 10.10.0.1
+
+
+
 
             
