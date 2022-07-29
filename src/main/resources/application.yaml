@@ -64,14 +64,12 @@ testData:
         security_group:
             name: onurcan
             project_id: d84321cc8bb04e30a6d04d4ca0b75c7a
-            id: 8b679597-1497-4cb5-be0f-679650adf023
             security_group_rules:
-                id: 8f57ac06-92fc-43dc-8f9d-f12a2291ccfd
                 direction: ingress
                 protocol: tcp
-                security_group_id: 5f54d437-554f-4b25-a5aa-544053c39bd4
+                port_range_min: 80
+                port_range_max: 80
         network:
-            id: ca223668-5cd3-4864-874b-e9616a7c1166
             name: onurcan-test
             shared: false
             router_external: false
@@ -81,9 +79,7 @@ testData:
             admin_state_up: true
             port_security_enabled: false
         subnet:
-            id: 9b502d5f-cd78-4946-a84c-0fab338537ab
             name: onurcan-test
-            network_id: ca223668-5cd3-4864-874b-e9616a7c1166
             ip_version: 4
             cidr: 10.10.0.0/24
             allocation_pool_start: 10.10.0.2

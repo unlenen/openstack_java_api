@@ -27,7 +27,10 @@ import unlenen.cloud.openstack.be.modules.network.models.SecurityGroupRule;
 import unlenen.cloud.openstack.be.modules.network.models.SecurityGroupRuleRoot;
 import unlenen.cloud.openstack.be.modules.network.models.Subnet;
 import unlenen.cloud.openstack.be.modules.network.models.SubnetRoot;
-import unlenen.cloud.openstack.be.modules.network.result.SecurityGroupRulesResult;
+import unlenen.cloud.openstack.be.modules.network.result.NetworkCreateResult;
+import unlenen.cloud.openstack.be.modules.network.result.SecurityGroupCreateResult;
+import unlenen.cloud.openstack.be.modules.network.result.SecurityGroupRuleCreateResult;
+import unlenen.cloud.openstack.be.modules.network.result.SubnetCreateResult;
 import unlenen.cloud.openstack.be.modules.network.service.NetworkService;
 
 @RunWith(SpringRunner.class)
@@ -57,42 +60,7 @@ public class NetworkServiceTest {
     }
 
     @Test
-    public void test_0001_createSecurityGroupRule() {
-        assertDoesNotThrow(() -> {
-            String token = createSystemToken();
-            SecurityGroupRuleRoot securityGroupRuleRoot = new SecurityGroupRuleRoot();
-            SecurityGroupRule securityGroupRule = new SecurityGroupRule();
-            securityGroupRule.setDirection(config.getSecurityGroupRulesDirection());
-            securityGroupRule.setProtocol(config.getSecurityGroupRulesProtocol());
-            securityGroupRule.setPort_range_min(80);
-            securityGroupRule.setPort_range_max(80);
-            securityGroupRule.setSecurity_group_id(config.getSecurityGroupRulesGroupId());
-            securityGroupRuleRoot.security_group_rule = securityGroupRule;
-            networkService.createSecurityGroupRules(token, securityGroupRuleRoot);
-        });
-    }
-
-    @Test
-    public void test_0002_listSecurityGroupRules() {
-        assertDoesNotThrow(() -> {
-            String token = createSystemToken();
-            SecurityGroupRulesResult securityGroupRulesResult = networkService.getSecurityGroupRules(token);
-            SecurityGroupRule securityGroupRule = securityGroupRulesResult.securityGroupRules.stream()
-                    .filter(s -> s.security_group_id.equals(config.getSecurityGroupRulesGroupId())).findFirst().get();
-            assert securityGroupRule.security_group_id.equals(config.getSecurityGroupRulesGroupId());
-        });
-    }
-
-    @Test
-    public void test_0003_deleteSecurityGroupRule() {
-        assertDoesNotThrow(() -> {
-            String token = createSystemToken();
-            networkService.deleteSecurityGroupRule(token, config.getSecurityGroupRulesId());
-        });
-    }
-
-    @Test
-    public void test_0011_createSecurityGroup() {
+    public void test_0001_createSecurityGroup() {
         assertDoesNotThrow(() -> {
             String token = createSystemToken();
             SecurityGroupRoot securityGroupRoot = new SecurityGroupRoot();
@@ -106,7 +74,33 @@ public class NetworkServiceTest {
     }
 
     @Test
-    public void test_0012_listSecurityGroups() {
+    public void test_0002_createSecurityGroupRule() {
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            SecurityGroupRuleRoot securityGroupRuleRoot = new SecurityGroupRuleRoot();
+            SecurityGroupRule securityGroupRule = new SecurityGroupRule();
+            securityGroupRule.setDirection(config.getSecurityGroupRulesDirection());
+            securityGroupRule.setProtocol(config.getSecurityGroupRulesProtocol());
+            securityGroupRule.setPort_range_min(config.getSecurityGroupRulesPortRangeMin());
+            securityGroupRule.setPort_range_max(config.getSecurityGroupRulesPortRangeMin());
+            String securityGroupId = networkService.getSecurityGroups(token).security_groups.stream()
+                    .filter(f -> f.name.equals(config.getSecurityGroupName())).findFirst().get().id;
+            securityGroupRule.setSecurity_group_id(securityGroupId);
+            securityGroupRuleRoot.security_group_rule = securityGroupRule;
+            networkService.createSecurityGroupRules(token, securityGroupRuleRoot);
+        });
+    }
+
+    @Test
+    public void test_0003_listSecurityGroupRules() {
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            assert networkService.getSecurityGroupRules(token) != null;
+        });
+    }
+
+    @Test
+    public void test_0004_listSecurityGroups() {
         assertDoesNotThrow(() -> {
             String token = createSystemToken();
             assert networkService.getSecurityGroups(token) != null;
@@ -114,15 +108,32 @@ public class NetworkServiceTest {
     }
 
     @Test
-    public void test_0013_deleteSecurityGroup() {
+    public void test_0005_deleteSecurityGroupRule() {
         assertDoesNotThrow(() -> {
             String token = createSystemToken();
-            networkService.deleteSecurityGroup(token, config.getSecurityGroupId());
+            String securityGroupRuleId = networkService.getSecurityGroupRules(token).securityGroupRules.stream().filter(
+                    f -> f.direction.equals(config.getSecurityGroupRulesDirection()) &&
+                            (f.protocol != null && f.protocol.equals(config.getSecurityGroupRulesProtocol())) &&
+                            f.port_range_min == (config.getSecurityGroupRulesPortRangeMin()) &&
+                            f.port_range_max == (config.getSecurityGroupRulesPortRangeMax()))
+                    .findFirst().get().id;
+
+            networkService.deleteSecurityGroupRule(token, securityGroupRuleId);
         });
     }
 
     @Test
-    public void test_0021_createNetwork() {
+    public void test_0006_deleteSecurityGroup() {
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            String securityGroupId = networkService.getSecurityGroups(token).security_groups.stream()
+                    .filter(f -> f.name.equals(config.getSecurityGroupName())).findFirst().get().id;
+            networkService.deleteSecurityGroup(token, securityGroupId);
+        });
+    }
+
+    @Test
+    public void test_0011_createNetwork() {
         assertDoesNotThrow(() -> {
             String token = createSystemToken();
             NetworkRoot networkRoot = new NetworkRoot();
@@ -141,29 +152,15 @@ public class NetworkServiceTest {
     }
 
     @Test
-    public void test_0022_listNetworks() {
-        assertDoesNotThrow(() -> {
-            String token = createSystemToken();
-            assert networkService.getNetworks(token) != null;
-        });
-    }
-
-    @Test
-    public void test_0023_deleteNetwork() {
-        assertDoesNotThrow(() -> {
-            String token = createSystemToken();
-            networkService.deleteNetwork(token, config.getNetworkId());
-        });
-    }
-
-    @Test
-    public void test_0031_createSubnet() {
+    public void test_0012_createSubnet() {
         assertDoesNotThrow(() -> {
             String token = createSystemToken();
             SubnetRoot subnetRoot = new SubnetRoot();
             Subnet subnet = new Subnet();
             subnet.setName(config.getSubnetName());
-            subnet.setNetwork_id(config.getSubnetNetworkId());
+            String networkId = networkService.getNetworks(token).networks.stream()
+                    .filter(f -> f.name.equals(config.getNetworkName())).findFirst().get().id;
+            subnet.setNetwork_id(networkId);
             subnet.setCidr(config.getSubnetCidr());
             subnet.setIp_version(config.getSubnetIpVersion());
 
@@ -177,13 +174,20 @@ public class NetworkServiceTest {
             subnet.setGateway_ip(config.getSubnetGateawayIp());
 
             subnetRoot.subnet = subnet;
-            assert networkService.createSubnet(token, subnetRoot) != null;
-
+            networkService.createSubnet(token, subnetRoot);
         });
     }
 
     @Test
-    public void test_0032_listSubnets() {
+    public void test_0013_listNetworks() {
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            assert networkService.getNetworks(token) != null;
+        });
+    }
+
+    @Test
+    public void test_0014_listSubnets() {
         assertDoesNotThrow(() -> {
             String token = createSystemToken();
             assert networkService.getSubnets(token) != null;
@@ -191,10 +195,22 @@ public class NetworkServiceTest {
     }
 
     @Test
-    public void test_0033_deleteSubnet() {
+    public void test_0015_deleteSubnet() {
         assertDoesNotThrow(() -> {
             String token = createSystemToken();
-            networkService.deleteSubnet(token, config.getSubnetId());
+            String subnetId=networkService.getSubnets(token).subnets.stream().filter(f->f.name.equals(config.getSubnetName())).findFirst().get().id;
+            networkService.deleteSubnet(token, subnetId);
         });
     }
+
+    @Test
+    public void test_0016_deleteNetwork() {
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            String networkId = networkService.getNetworks(token).networks.stream()
+            .filter(f -> f.name.equals(config.getNetworkName())).findFirst().get().id;
+            networkService.deleteNetwork(token, networkId);
+        });
+    }
+
 }

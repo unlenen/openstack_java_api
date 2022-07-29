@@ -24,26 +24,20 @@ public class NetworkServiceTestConfig {
     @Value("${testData.network_service.security_group.name}")
     String securityGroupName;
 
-    @Value("${testData.network_service.security_group.id}")
-    String securityGroupId;
-
     @Value("${testData.network_service.security_group.project_id}")
     String securityGroupProjectId;
 
-    @Value("${testData.network_service.security_group.security_group_rules.id}")
-    String securityGroupRulesId;
-
-    @Value("${testData.network_service.security_group.security_group_rules.security_group_id}")
-    String securityGroupRulesGroupId;
-    
     @Value("${testData.network_service.security_group.security_group_rules.direction}")
     String securityGroupRulesDirection;
 
     @Value("${testData.network_service.security_group.security_group_rules.protocol}")
     String securityGroupRulesProtocol;
 
-    @Value("${testData.network_service.network.id}")
-    String networkId;
+    @Value("${testData.network_service.security_group.security_group_rules.port_range_min}")
+    int securityGroupRulesPortRangeMin;
+
+    @Value("${testData.network_service.security_group.security_group_rules.port_range_max}")
+    int securityGroupRulesPortRangeMax;
 
     @Value("${testData.network_service.network.name}")
     String networkName;
@@ -68,15 +62,9 @@ public class NetworkServiceTestConfig {
 
     @Value("${testData.network_service.network.port_security_enabled}")
     boolean networkPortSecurityEnabled;
-
-    @Value("${testData.network_service.subnet.id}")
-    String subnetId;
     
     @Value("${testData.network_service.subnet.name}")
     String subnetName;
-
-    @Value("${testData.network_service.subnet.network_id}")
-    String subnetNetworkId;
 
     @Value("${testData.network_service.subnet.ip_version}")
     int subnetIpVersion;
