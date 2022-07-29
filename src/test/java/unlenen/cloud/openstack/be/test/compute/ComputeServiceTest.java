@@ -211,30 +211,6 @@ public class ComputeServiceTest {
             }
         });
     }
-
-
-
-
-    @Test
-    public void test() throws Exception{
-
-        Quota hzKota = new Quota();
-        hzKota.setCores(5);
-        hzKota.setInstances(10);
-
-        JSONObject root = new JSONObject();
-        JSONObject quota_set = new JSONObject();
-        root.put("quota_set", quota_set);
-
-        for (Field field : hzKota.getClass().getDeclaredFields()){
-            String name = field.getName();
-            Object val = field.get(hzKota);
-            if(val!=null)
-            quota_set.put(name, val);
-            }
-    
-        System.out.println(root);
-    }
 }
 
 

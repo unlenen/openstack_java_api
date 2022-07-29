@@ -64,11 +64,29 @@ testData:
         security_group:
             name: onurcan
             project_id: d84321cc8bb04e30a6d04d4ca0b75c7a
-            id: 8b679597-1497-4cb5-be0f-679650adf023
             security_group_rules:
-                id: 8f57ac06-92fc-43dc-8f9d-f12a2291ccfd
                 direction: ingress
                 protocol: tcp
-                security_group_id: 5f54d437-554f-4b25-a5aa-544053c39bd4
+                port_range_min: 80
+                port_range_max: 80
+        network:
+            name: onurcan-test
+            shared: false
+            router_external: false
+            provider_network_type: vxlan
+            description: hello
+            mtu: 1450
+            admin_state_up: true
+            port_security_enabled: false
+        subnet:
+            name: onurcan-test
+            ip_version: 4
+            cidr: 10.10.0.0/24
+            allocation_pool_start: 10.10.0.2
+            allocation_pool_end: 10.10.0.254
+            gateaway_ip: 10.10.0.1
+
+
+
 
             
