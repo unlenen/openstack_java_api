@@ -107,7 +107,8 @@ public class ImageServiceTest {
         assertDoesNotThrow(() -> {
             String token = createSystemToken();
             String image_id = imageService.getImages(token, config.getImageName(), "").images.stream().filter(f -> f.name.equals(config.getImageName())).findFirst().get().id;
-            imageService.uploadImageData(token,image_id);
+            String filepath="/home/argela/argela/test/cirros-0.5.2-x86_64-disk.img";
+            imageService.uploadImageData(token,image_id,filepath);
         });
     }
 }
