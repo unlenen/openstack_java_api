@@ -59,6 +59,7 @@ testData:
                 name: main-project
         image:
             name: ubuntuNebi
+            tag: test-1
 
     network_service:
         security_group:

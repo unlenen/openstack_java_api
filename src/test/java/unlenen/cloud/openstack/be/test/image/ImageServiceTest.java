@@ -70,6 +70,27 @@ public class ImageServiceTest {
     }
 
     @Test
+    public void test_0011_addImageTag(){
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            String image_id = imageService.getImages(token, config.getImageName(), "").images.stream().filter(f -> f.name.equals(config.getImageName())).findFirst().get().id;
+            
+            imageService.addImageTag(token, image_id, config.getImageTag());
+        });
+    }
+
+
+    @Test
+    public void test_0012_deleteImageTag(){
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            String image_id = imageService.getImages(token, config.getImageName(), "").images.stream().filter(f -> f.name.equals(config.getImageName())).findFirst().get().id;
+            
+            imageService.deleteImageTag(token, image_id, config.getImageTag());
+        });
+    }
+
+    @Test
     public void test_0003_deleteImage() {
         assertDoesNotThrow(() -> {
             String token = createSystemToken();
@@ -81,4 +102,12 @@ public class ImageServiceTest {
         });
     }
 
+    @Test
+    public void test_0021_uploadImageData(){
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            String image_id = imageService.getImages(token, config.getImageName(), "").images.stream().filter(f -> f.name.equals(config.getImageName())).findFirst().get().id;
+            imageService.uploadImageData(token,image_id);
+        });
+    }
 }

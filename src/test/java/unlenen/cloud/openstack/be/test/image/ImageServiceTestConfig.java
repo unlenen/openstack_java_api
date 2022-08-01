@@ -35,4 +35,7 @@ public class ImageServiceTestConfig {
     @Value("${testData.image_service.image.name}")
     String imageName;
 
+    @Value("${testData.image_service.image.tag}")
+    String imageTag;
+
 }
