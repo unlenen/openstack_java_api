@@ -7,5 +7,6 @@ package unlenen.cloud.openstack.be.constant;
 public enum ParameterType {
     URI,
     REQUEST,
-    JSON;
+    JSON,
+    FILE;
 }
