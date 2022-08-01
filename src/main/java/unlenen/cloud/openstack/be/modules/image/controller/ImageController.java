@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -80,6 +81,42 @@ public class ImageController {
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
+    @PutMapping("/v2/images/{image_id}/tags/{tag}")
+    public ResponseEntity<OpenStackResponse> addImageTag(
+            @RequestHeader("token") String token,
+            @PathVariable() String image_id,
+            @PathVariable() String tag
+
+    ) {
+        OpenStackResponse openStackResponse = new OpenStackResponse();
+        HttpStatus httpStatus;
+        try {
+            imageService.addImageTag(token,image_id,tag);
+            httpStatus = HttpStatus.NO_CONTENT;
+        } catch (Exception e) {
+            httpStatus = handleError(openStackResponse, e);
+        }
+        return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
+    }
+
+    @DeleteMapping("/v2/images/{image_id}/tags/{tag}")
+    public ResponseEntity<OpenStackResponse> deleteImageTag(
+            @RequestHeader("token") String token,
+            @PathVariable() String image_id,
+            @PathVariable() String tag
+
+    ) {
+        OpenStackResponse openStackResponse = new OpenStackResponse();
+        HttpStatus httpStatus;
+        try {
+            imageService.deleteImageTag(token,image_id,tag);
+            httpStatus = HttpStatus.NO_CONTENT;
+        } catch (Exception e) {
+            httpStatus = handleError(openStackResponse, e);
+        }
+        return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
+    }
+    
     private HttpStatus handleError(OpenStackResponse openStackResponse, Exception e) {
         HttpStatus httpStatus;
         openStackResponse.setError(new ErrorInfo(e.getClass().getSimpleName(), e.getMessage()));

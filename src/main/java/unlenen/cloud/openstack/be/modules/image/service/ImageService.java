@@ -75,4 +75,42 @@ public class ImageService extends CommonService {
         );
     }
 
+    @Call(type = HttpMethod.PUT, url = "/v2/images/{image_id}/tags/{tag}",statusCode = HttpStatus.NO_CONTENT)
+    public void addImageTag(String token, String image_id,String tag) throws Exception{
+        call(getServiceURL(token, OpenStackModule.image),
+            new Parameter[]{
+                new Parameter(OpenStackHeader.TOKEN.getKey(), token)
+            },
+            new Parameter[]{
+                new Parameter("image_id", image_id, ParameterType.URI),
+                new Parameter("tag", tag, ParameterType.URI)
+            }   
+        );
+    }
+
+    @Call(type = HttpMethod.DELETE, url = "/v2/images/{image_id}/tags/{tag}",statusCode = HttpStatus.NO_CONTENT)
+    public void deleteImageTag(String token, String image_id,String tag) throws Exception{
+        call(getServiceURL(token, OpenStackModule.image),
+            new Parameter[]{
+                new Parameter(OpenStackHeader.TOKEN.getKey(), token)
+            },
+            new Parameter[]{
+                new Parameter("image_id", image_id, ParameterType.URI),
+                new Parameter("tag", tag, ParameterType.URI)
+            }   
+        );
+    }
+
+    @Call(type = HttpMethod.PUT, url = "/v2/images/{image_id}/file",mediaType = "application/octet-stream" ,statusCode = HttpStatus.NO_CONTENT)
+    public void uploadImageData(String token, String image_id) throws Exception{
+        call(getServiceURL(token, OpenStackModule.image),
+            new Parameter[]{
+                new Parameter(OpenStackHeader.TOKEN.getKey(), token)
+            },
+            new Parameter[]{
+                new Parameter("image_id", image_id, ParameterType.URI),
+            }   
+        );
+    }
+
 }
