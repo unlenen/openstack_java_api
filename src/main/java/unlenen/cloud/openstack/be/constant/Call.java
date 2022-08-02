@@ -30,5 +30,7 @@ public @interface Call {
 
     String mediaType() default "application/json";
 
+    boolean isDownload() default false;
+
     Class<? extends OpenStackResult> openstackResult() default OpenStackResult.class;
 }
