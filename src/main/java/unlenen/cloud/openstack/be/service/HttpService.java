@@ -1,10 +1,12 @@
 package unlenen.cloud.openstack.be.service;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +21,7 @@ import javax.net.ssl.X509TrustManager;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
@@ -27,16 +30,21 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpMessageConverterExtractor;
+import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import unlenen.cloud.openstack.be.constant.Call;
 import unlenen.cloud.openstack.be.constant.Header;
 import unlenen.cloud.openstack.be.constant.Parameter;
+import unlenen.cloud.openstack.be.constant.ParameterType;
 
 /**
  *
@@ -46,6 +54,7 @@ import unlenen.cloud.openstack.be.constant.Parameter;
 public class HttpService {
 
     Logger log = LoggerFactory.getLogger(HttpService.class);
+    final static String MEDIA_TYPE_OCTET_STREAM = "application/octet-stream";
 
     SSLSocketFactory socketFactory;
     X509TrustManager x509TrustManager;
@@ -111,7 +120,17 @@ public class HttpService {
     }
 
     public ResponseEntity commonCall(Call call, String baseURL, HttpEntity requestEntity, Parameter[] parameters) {
+        return commonCall(call, baseURL, requestEntity, parameters, null);
+    }
+
+    public ResponseEntity commonCall(Call call, String baseURL, HttpEntity requestEntity, Parameter[] parameters,
+            RequestCallback requestCallback) {
         RestTemplate restTemplate = new RestTemplate();
+        if (requestCallback != null) {
+            SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+            requestFactory.setBufferRequestBody(false);
+            restTemplate.setRequestFactory(requestFactory);
+        }
         if (call.type() == HttpMethod.PATCH) {
             HttpClient client = HttpClients.createDefault();
             restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory(client));
@@ -144,27 +163,67 @@ public class HttpService {
         }
 
         ResponseEntity<String> response;
+
         switch (call.type()) {
             case PATCH:
                 String output = restTemplate.patchForObject(url, requestEntity, String.class, params);
                 return new ResponseEntity(output, HttpStatus.OK);
             default:
-                return restTemplate.exchange(url, call.type(), requestEntity, String.class, params);
+                if (requestCallback != null) {
+                    final HttpMessageConverterExtractor<String> responseExtractor = new HttpMessageConverterExtractor<String>(
+                            String.class, restTemplate.getMessageConverters());
+
+                    for (String key : params.keySet()) {
+                        url= url.replaceAll("\\{"+key+"\\}", params.get(key));
+                    }
+
+                    String body = restTemplate.execute(url, call.type(), requestCallback, responseExtractor,
+                            String.class, params);
+                    return new ResponseEntity<String>(body, call.statusCode());
+                } else
+                    return restTemplate.exchange(url, call.type(), requestEntity, String.class, params);
         }
 
     }
 
-    public ResponseEntity push(Call call, String baseURL, String data, HttpHeaders headers, Parameter[] parameters) {
-        HttpEntity<String> requestEntity;
+    public ResponseEntity push(Call call, String baseURL, String data, final HttpHeaders headers,
+            Parameter[] parameters) {
+        HttpEntity requestEntity = null;
 
-        if (call.mediaType() != null && data != null) {
-            headers.setContentType(org.springframework.http.MediaType.parseMediaType(call.mediaType()));
-            requestEntity = new HttpEntity<>(data, headers);
-        } else {
+        RequestCallback requestCallback = null;
+        if (call.mediaType() != null) {
+
+            if (data != null) {
+                requestEntity = new HttpEntity<>(data, headers);
+                headers.setContentType(org.springframework.http.MediaType.parseMediaType(call.mediaType()));
+            }
+            if (MEDIA_TYPE_OCTET_STREAM.equals(call.mediaType())) {
+
+                final Parameter parameter = Arrays.stream(parameters)
+                        .filter(p -> p.getParameterType() == ParameterType.FILE)
+                        .findFirst().get();
+
+                requestCallback = new RequestCallback() {
+                    @Override
+                    public void doWithRequest(final ClientHttpRequest request) throws IOException {
+
+                        for (String headerKey : headers.keySet()) {
+                            request.getHeaders().add(headerKey, headers.get(headerKey) + "");
+                        }
+
+                        request.getHeaders().add("Content-type", MEDIA_TYPE_OCTET_STREAM);
+                        IOUtils.copy(new FileInputStream(new File(parameter.getValue())), request.getBody());
+                    }
+                };
+
+            }
+        }
+
+        if (requestEntity == null) {
             requestEntity = new HttpEntity<>(headers);
         }
 
-        return commonCall(call, baseURL, requestEntity, parameters);
+        return commonCall(call, baseURL, requestEntity, parameters, requestCallback);
     }
 
     public ResponseEntity call(Call call, String baseURL, Parameter[] extraHeaders, Parameter[] parameters,
