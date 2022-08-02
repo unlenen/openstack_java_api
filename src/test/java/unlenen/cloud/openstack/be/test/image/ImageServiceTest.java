@@ -111,4 +111,16 @@ public class ImageServiceTest {
             imageService.uploadImageData(token,image_id,filepath);
         });
     }
+
+
+    @Test
+    public void test_0022_downloadImageData(){
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            //String image_id = imageService.getImages(token, config.getImageName(), "").images.stream().filter(f -> f.name.equals(config.getImageName())).findFirst().get().id;
+            String image_id= "25b7c394-882d-482c-b80c-cad1ef5ca806";
+            String filePath= "/home/argela/argela/test/downloads/windows.img";
+            imageService.downloadImageData(token,image_id,filePath);
+        });
+    }
 }

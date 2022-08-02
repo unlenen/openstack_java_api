@@ -2,8 +2,12 @@ package unlenen.cloud.openstack.be.service;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +33,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -36,8 +41,10 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.client.HttpMessageConverterExtractor;
 import org.springframework.web.client.RequestCallback;
+import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -120,12 +127,19 @@ public class HttpService {
     }
 
     public ResponseEntity commonCall(Call call, String baseURL, HttpEntity requestEntity, Parameter[] parameters) {
-        return commonCall(call, baseURL, requestEntity, parameters, null);
+        return commonCall(call, baseURL, requestEntity, parameters, null, null);
     }
 
     public ResponseEntity commonCall(Call call, String baseURL, HttpEntity requestEntity, Parameter[] parameters,
-            RequestCallback requestCallback) {
+            RequestCallback requestCallback, ResponseExtractor responseExtractor) {
         RestTemplate restTemplate = new RestTemplate();
+        return commonCall(restTemplate, call, baseURL, requestEntity, parameters, requestCallback, responseExtractor);
+    }
+
+    public ResponseEntity commonCall(RestTemplate restTemplate, Call call, String baseURL,
+            HttpEntity requestEntity, Parameter[] parameters,
+            RequestCallback requestCallback, ResponseExtractor responseExtractor) {
+
         if (requestCallback != null) {
             SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
             requestFactory.setBufferRequestBody(false);
@@ -170,16 +184,20 @@ public class HttpService {
                 return new ResponseEntity(output, HttpStatus.OK);
             default:
                 if (requestCallback != null) {
-                    final HttpMessageConverterExtractor<String> responseExtractor = new HttpMessageConverterExtractor<String>(
-                            String.class, restTemplate.getMessageConverters());
 
                     for (String key : params.keySet()) {
-                        url= url.replaceAll("\\{"+key+"\\}", params.get(key));
+                        url = url.replaceAll("\\{" + key + "\\}", params.get(key));
                     }
-
-                    String body = restTemplate.execute(url, call.type(), requestCallback, responseExtractor,
-                            String.class, params);
-                    return new ResponseEntity<String>(body, call.statusCode());
+                    if (call.isDownload()) {
+                        restTemplate.execute(url, call.type(), requestCallback, responseExtractor,
+                                Void.class, params);
+                        return new ResponseEntity<String>("", call.statusCode());
+                    } else {
+                        String body = restTemplate.execute(url, call.type(), requestCallback,
+                                (HttpMessageConverterExtractor<String>) responseExtractor,
+                                String.class, params);
+                        return new ResponseEntity<String>(body, call.statusCode());
+                    }
                 } else
                     return restTemplate.exchange(url, call.type(), requestEntity, String.class, params);
         }
@@ -189,8 +207,10 @@ public class HttpService {
     public ResponseEntity push(Call call, String baseURL, String data, final HttpHeaders headers,
             Parameter[] parameters) {
         HttpEntity requestEntity = null;
+        RestTemplate restTemplate = new RestTemplate();
 
         RequestCallback requestCallback = null;
+        ResponseExtractor responseExtractor = null;
         if (call.mediaType() != null) {
 
             if (data != null) {
@@ -215,6 +235,8 @@ public class HttpService {
                         IOUtils.copy(new FileInputStream(new File(parameter.getValue())), request.getBody());
                     }
                 };
+                responseExtractor = new HttpMessageConverterExtractor<String>(String.class,
+                        restTemplate.getMessageConverters());
 
             }
         }
@@ -223,7 +245,37 @@ public class HttpService {
             requestEntity = new HttpEntity<>(headers);
         }
 
-        return commonCall(call, baseURL, requestEntity, parameters, requestCallback);
+        return commonCall(restTemplate, call, baseURL, requestEntity, parameters, requestCallback, responseExtractor);
+    }
+
+    public ResponseEntity downloadFile(Call call, String baseURL, String data, final HttpHeaders headers,
+            Parameter[] parameters) {
+        HttpEntity requestEntity = null;
+
+        final Parameter filePathParameter = Arrays.stream(parameters)
+                .filter(p -> p.getParameterType() == ParameterType.FILE)
+                .findFirst().get();
+
+        RequestCallback requestCallback = new RequestCallback() {
+            @Override
+            public void doWithRequest(final ClientHttpRequest request) throws IOException {
+
+                for (String headerKey : headers.keySet()) {
+                    request.getHeaders().add(headerKey, headers.get(headerKey) + "");
+                }
+
+                request.getHeaders().add("Content-type", MEDIA_TYPE_OCTET_STREAM);
+            }
+        };
+
+        ResponseExtractor<Void> responseExtractor = response -> {
+            Path path = Paths.get(filePathParameter.getValue());
+            Files.copy(response.getBody(), path);
+            return null;
+        };
+
+        return commonCall(call, baseURL, requestEntity, parameters, requestCallback, responseExtractor);
+
     }
 
     public ResponseEntity call(Call call, String baseURL, Parameter[] extraHeaders, Parameter[] parameters,
@@ -246,7 +298,11 @@ public class HttpService {
 
         switch (call.type()) {
             default:
-            case GET:
+            case GET: {
+                if (call.isDownload()) {
+                    return downloadFile(call, baseURL, data, headers, parameters);
+                }
+            }
             case DELETE: {
                 return commonCall(call, baseURL, new HttpEntity<>(headers), parameters);
             }
