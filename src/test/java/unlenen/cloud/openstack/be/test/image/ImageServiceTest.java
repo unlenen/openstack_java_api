@@ -117,8 +117,7 @@ public class ImageServiceTest {
     public void test_0022_downloadImageData(){
         assertDoesNotThrow(() -> {
             String token = createSystemToken();
-            //String image_id = imageService.getImages(token, config.getImageName(), "").images.stream().filter(f -> f.name.equals(config.getImageName())).findFirst().get().id;
-            String image_id= "59704475-6d78-462a-b2ca-7d7ae9f7c9ce";
+            String image_id = imageService.getImages(token, config.getImageName(), "").images.stream().filter(f -> f.name.equals(config.getImageName())).findFirst().get().id;
             String filePath= "/home/argela/argela/test/downloads/cirros.img";
             imageService.downloadImageData(token,image_id,filePath);
         });
