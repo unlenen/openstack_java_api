@@ -111,4 +111,10 @@ public class ImageService extends CommonService {
                                 });
         }
 
+        public String getImageUrl(String token, String image_id) throws Exception{
+                String serviceUrl=getServiceURL(token, OpenStackModule.image);
+                String url = "/v2/images/{image_id}/file".replace("{image_id}", image_id);
+                return serviceUrl+url;
+        }
+
 }
