@@ -47,9 +47,16 @@ public class OrchestrationServiceTest {
         assert loginResult.getId() != null;
         return loginResult.getId();
     }
+    @Test
+    public void test_0001_createStack(){
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+           orchestrationService.createStack(token, config.getStackName(),config.getStackTemplateFile(),config.getStackEnvFile());
+        });
+    }
 
     @Test
-    public void test_0001_listStacks() {
+    public void test_0002_listStacks() {
         assertDoesNotThrow(() -> {
             String token = createSystemToken();
            orchestrationService.getStacks(token);
@@ -57,10 +64,14 @@ public class OrchestrationServiceTest {
     }
 
     @Test
-    public void test_0002_createStack(){
+    public void test_0003_deleteStack(){
         assertDoesNotThrow(() -> {
             String token = createSystemToken();
-           orchestrationService.createStack(token, "onurcan","/home/argela/Downloads/template.yaml", "/home/argela/Downloads/env.yaml");
+            String stackId= orchestrationService.getStacks(token).stacks.stream().filter(f->f.stack_name.equals(config.getStackName())).findFirst().get().id;
+            orchestrationService.deleteStack(token,config.getStackName(), stackId);
         });
     }
+
+
+
 }

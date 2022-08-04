@@ -87,6 +87,11 @@ testData:
             allocation_pool_end: 10.10.0.254
             gateaway_ip: 10.10.0.1
 
+    orchestration_service:
+        stack:
+            name: onurcan
+            templateFile: /home/argela/Downloads/template.yaml
+            envFile: /home/argela/Downloads/env.yaml
 
 
 

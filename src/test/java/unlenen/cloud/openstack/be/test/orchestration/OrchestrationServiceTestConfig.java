@@ -21,4 +21,13 @@ public class OrchestrationServiceTestConfig {
 
     @Value("${testData.system_user.password}")
     String systemPassword;
+
+    @Value("${testData.orchestration_service.stack.name}")
+    String stackName;
+
+    @Value("${testData.orchestration_service.stack.templateFile}")
+    String stackTemplateFile;
+
+    @Value("${testData.orchestration_service.stack.envFile}")
+    String stackEnvFile;
 }

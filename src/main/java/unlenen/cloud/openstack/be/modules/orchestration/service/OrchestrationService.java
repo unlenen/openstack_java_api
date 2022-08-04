@@ -74,13 +74,14 @@ public class OrchestrationService extends CommonService {
                                 3);
         }
 
-        @Call(type = HttpMethod.DELETE, url = "/v2/stacks/{stack_id}", statusCode = HttpStatus.NO_CONTENT)
-        public void deleteStack(String token, String stackId) throws Exception {
+        @Call(type = HttpMethod.DELETE, url = "/stacks/{stack_name}/{stack_id}", statusCode = HttpStatus.NO_CONTENT)
+        public void deleteStack(String token,String stackName ,String stackId) throws Exception {
                 call(getServiceURL(token, OpenStackModule.orchestration),
                                 new Parameter[] {
                                                 new Parameter(OpenStackHeader.TOKEN.getKey(), token)
                                 },
                                 new Parameter[] {
+                                                new Parameter("stack_name", stackName, ParameterType.URI),
                                                 new Parameter("stack_id", stackId, ParameterType.URI)
                                 });
         }
