@@ -112,11 +112,11 @@ public class ComputeController {
     @DeleteMapping("/os-keypairs/{keypair_name}")
     public ResponseEntity<OpenStackResponse> deleteKeypair(
             @RequestHeader("token") String token,
-            @PathVariable() String keypairName) {
+            @PathVariable() String keypair_name) {
         OpenStackResponse openStackResponse = new OpenStackResponse();
         HttpStatus httpStatus;
         try {
-            computeService.deleteKeypair(token, keypairName);
+            computeService.deleteKeypair(token, keypair_name);
             httpStatus = HttpStatus.NO_CONTENT;
         } catch (Exception e) {
             httpStatus = handleError(openStackResponse, e);

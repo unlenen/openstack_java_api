@@ -12,7 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import unlenen.cloud.openstack.be.config.OpenStackConfig;
 import unlenen.cloud.openstack.be.constant.Call;
@@ -97,6 +100,14 @@ public class CommonService {
 
     protected ObjectMapper getObjectMapper() {
         return objectMapper;
+    }
+
+    public String convertYamlToJson(String yaml) throws JsonMappingException, JsonProcessingException {
+        ObjectMapper yamlReader = new ObjectMapper(new YAMLFactory());
+        Object obj = yamlReader.readValue(yaml, Object.class);
+    
+        ObjectMapper jsonWriter = new ObjectMapper();
+        return jsonWriter.writeValueAsString(obj);
     }
 
 }
