@@ -12,7 +12,8 @@ public enum OpenStackModule {
     compute,
     image,
     network,
-    orchestration;
+    orchestration,
+    volumev3;
 
     final static Set<String> enums = new HashSet();
 
