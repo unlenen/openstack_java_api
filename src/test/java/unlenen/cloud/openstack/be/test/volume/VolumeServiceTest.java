@@ -17,7 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import unlenen.cloud.openstack.be.Application;
 import unlenen.cloud.openstack.be.modules.identity.result.LoginResult;
 import unlenen.cloud.openstack.be.modules.identity.service.IdentityService;
-import unlenen.cloud.openstack.be.modules.volume.VolumeService;
+import unlenen.cloud.openstack.be.modules.volume.service.VolumeService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
@@ -50,7 +50,7 @@ public class VolumeServiceTest {
     public void test_0002_listVolumes() {
         assertDoesNotThrow(() -> {
             String token = createSystemToken();
-            volumeService.getVolumes(token);
+            assert volumeService.getVolumes(token) != null;
         });
     }
 }

@@ -17,9 +17,11 @@ import unlenen.cloud.openstack.be.modules.identity.result.DomainResult;
 import unlenen.cloud.openstack.be.modules.identity.result.LoginResult;
 import unlenen.cloud.openstack.be.modules.identity.result.ProjectCreateResult;
 import unlenen.cloud.openstack.be.modules.identity.result.ProjectResult;
+import unlenen.cloud.openstack.be.modules.identity.result.TokenResult;
 import unlenen.cloud.openstack.be.modules.identity.result.UserCreateResult;
 import unlenen.cloud.openstack.be.modules.identity.result.UserResult;
 import unlenen.cloud.openstack.be.modules.identity.service.IdentityService;
+import unlenen.cloud.openstack.be.service.CommonService;
 
 /**
  *
@@ -70,7 +72,8 @@ public class IdentityServiceTest {
         assertDoesNotThrow(() -> {
             String token = createSystemToken();
             DomainResult domainResult = identityService.getDomains(token, config.getDomainName());
-            UserCreateResult userCreateResult = identityService.createUser(token, config.getUserName(), config.getPassword(), "test@test.com", "", domainResult.domains.get(0).id);
+            UserCreateResult userCreateResult = identityService.createUser(token, config.getUserName(),
+                    config.getPassword(), "test@test.com", "", domainResult.domains.get(0).id);
             assert userCreateResult.user.id != null;
         });
     }
@@ -103,7 +106,8 @@ public class IdentityServiceTest {
         assertDoesNotThrow(() -> {
             String token = createSystemToken();
             DomainResult domainResult = identityService.getDomains(token, config.getDomainName());
-            ProjectResult projectResult = identityService.getProjects(token, domainResult.domains.get(0).id, config.getProjectName());
+            ProjectResult projectResult = identityService.getProjects(token, domainResult.domains.get(0).id,
+                    config.getProjectName());
             assert projectResult.projects.get(0).id != null;
         });
     }
@@ -113,7 +117,8 @@ public class IdentityServiceTest {
         assertDoesNotThrow(() -> {
             String token = createSystemToken();
             DomainResult domainResult = identityService.getDomains(token, config.getDomainName());
-            UserResult userResult = identityService.getUsers(token, domainResult.domains.get(0).id, config.getUserName(), "");
+            UserResult userResult = identityService.getUsers(token, domainResult.domains.get(0).id,
+                    config.getUserName(), "");
             assert userResult.users.get(0).id != null;
         });
     }
@@ -123,7 +128,8 @@ public class IdentityServiceTest {
         assertDoesNotThrow(() -> {
             String token = createSystemToken();
             DomainResult domainResult = identityService.getDomains(token, config.getDomainName());
-            ProjectResult projectResult = identityService.getProjects(token, domainResult.domains.get(0).id, config.getProjectName());
+            ProjectResult projectResult = identityService.getProjects(token, domainResult.domains.get(0).id,
+                    config.getProjectName());
             identityService.deleteProject(token, projectResult.projects.get(0).id);
         });
     }
@@ -133,7 +139,8 @@ public class IdentityServiceTest {
         assertDoesNotThrow(() -> {
             String token = createSystemToken();
             DomainResult domainResult = identityService.getDomains(token, config.getDomainName());
-            UserResult userResult = identityService.getUsers(token, domainResult.domains.get(0).id, config.getUserName(), "");
+            UserResult userResult = identityService.getUsers(token, domainResult.domains.get(0).id,
+                    config.getUserName(), "");
             identityService.deleteUser(token, userResult.users.get(0).id);
         });
     }
@@ -145,6 +152,14 @@ public class IdentityServiceTest {
             DomainResult domainResult = identityService.getDomains(token, config.getDomainName());
             identityService.updateDomain(token, domainResult.domains.get(0).id, "false", "");
             identityService.deleteDomain(token, domainResult.domains.get(0).id);
+        });
+    }
+
+    @Test
+    public void test_011_getTokenInformation() {
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            identityService.getToken(token,token);
         });
     }
 }
