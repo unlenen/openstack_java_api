@@ -93,6 +93,10 @@ testData:
             templateFile: /home/argela/Downloads/template.yaml
             envFile: /home/argela/Downloads/env.yaml
 
+    volume_service:
+        volume:
+            name: onurcan
+            size: 10
 
 
             

@@ -17,6 +17,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import unlenen.cloud.openstack.be.Application;
 import unlenen.cloud.openstack.be.modules.identity.result.LoginResult;
 import unlenen.cloud.openstack.be.modules.identity.service.IdentityService;
+import unlenen.cloud.openstack.be.modules.volume.models.Volume;
+import unlenen.cloud.openstack.be.modules.volume.models.VolumeRoot;
 import unlenen.cloud.openstack.be.modules.volume.service.VolumeService;
 
 @RunWith(SpringRunner.class)
@@ -45,6 +47,18 @@ public class VolumeServiceTest {
         assert loginResult.getId() != null;
         return loginResult.getId();
     }
+    @Test
+    public void test_0001_createVolume() {
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            VolumeRoot volumeRoot= new VolumeRoot();
+            Volume volume= new Volume();
+            volume.setSize(config.getVolumeSize());
+            volume.setName(config.getVolumeName());
+            volumeRoot.volume=volume;
+            assert volumeService.createVolume(token,volumeRoot) != null;
+        });
+    }
 
     @Test
     public void test_0002_listVolumes() {
@@ -53,4 +67,14 @@ public class VolumeServiceTest {
             assert volumeService.getVolumes(token) != null;
         });
     }
+
+    @Test
+    public void test_0003_deleteVolume() {
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            String volume_id= volumeService.getVolumes(token).volumes.stream().filter(v-> v.getName().equals(config.getVolumeName())).findFirst().get().getId();
+            volumeService.deleteVolume(token, volume_id);
+        });
+    }
+
 }

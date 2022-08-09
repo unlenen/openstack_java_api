@@ -21,4 +21,10 @@ public class VolumeServiceTestConfig {
 
     @Value("${testData.system_user.password}")
     String systemPassword;
+
+    @Value("${testData.volume_service.volume.name}")
+    String volumeName;
+
+    @Value("${testData.volume_service.volume.size}")
+    int volumeSize;
 }
