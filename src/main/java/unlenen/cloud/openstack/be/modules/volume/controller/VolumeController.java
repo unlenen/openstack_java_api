@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import unlenen.cloud.openstack.be.exception.UnvalidCallException;
@@ -40,11 +41,14 @@ public class VolumeController {
 
     @PostMapping("/volumes")
     public ResponseEntity<OpenStackResponse> createVolume(@RequestHeader("token") String token,
-            @RequestBody VolumeRoot volumeRoot) {
+            @RequestParam String name,
+            @RequestParam String bootable,
+            @RequestParam String imageRef,
+            @RequestParam int size) {
         OpenStackResponse openStackResponse = new OpenStackResponse();
         HttpStatus httpStatus;
         try {
-            openStackResponse.setOpenStackResult(volumeService.createVolume(token, volumeRoot));
+            openStackResponse.setOpenStackResult(volumeService.createVolume(token, name, bootable,imageRef, size));
             httpStatus = HttpStatus.ACCEPTED;
         } catch (Exception e) {
             httpStatus = handleError(openStackResponse, e);

@@ -66,6 +66,9 @@ public class Volume implements OpenStackRequest {
     public String source_volid;
 
     @JsonInclude(Include.NON_NULL)
+    public String imageRef;
+
+    @JsonInclude(Include.NON_NULL)
     public String status;
 
     @JsonInclude(Include.NON_NULL)
@@ -75,7 +78,7 @@ public class Volume implements OpenStackRequest {
     public String user_id;
 
     @JsonInclude(Include.NON_NULL)
-    public String volume_type = "__DEFAULT__	";
+    public String volume_type;
 
     @JsonInclude(Include.NON_NULL)
     public String group_id;

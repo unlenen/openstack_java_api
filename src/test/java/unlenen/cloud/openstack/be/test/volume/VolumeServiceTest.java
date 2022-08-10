@@ -51,12 +51,11 @@ public class VolumeServiceTest {
     public void test_0001_createVolume() {
         assertDoesNotThrow(() -> {
             String token = createSystemToken();
-            VolumeRoot volumeRoot= new VolumeRoot();
-            Volume volume= new Volume();
-            volume.setSize(config.getVolumeSize());
-            volume.setName(config.getVolumeName());
-            volumeRoot.volume=volume;
-            assert volumeService.createVolume(token,volumeRoot) != null;
+            int size= config.getVolumeSize();
+            String name= config.getVolumeName();
+            String bootable= config.getVolumeBootable();
+            String imageRef= config.getVolumeImageRef();
+            assert volumeService.createVolume(token,name,bootable,imageRef,size) != null;
         });
     }
 

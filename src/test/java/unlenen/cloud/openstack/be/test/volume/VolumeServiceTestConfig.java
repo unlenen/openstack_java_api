@@ -25,6 +25,12 @@ public class VolumeServiceTestConfig {
     @Value("${testData.volume_service.volume.name}")
     String volumeName;
 
+    @Value("${testData.volume_service.volume.bootable}")
+    String volumeBootable;
+
+    @Value("${testData.volume_service.volume.imageRef}")
+    String volumeImageRef;
+
     @Value("${testData.volume_service.volume.size}")
     int volumeSize;
 }
