@@ -19,6 +19,7 @@ import unlenen.cloud.openstack.be.exception.UnvalidCallException;
 import unlenen.cloud.openstack.be.model.response.ErrorInfo;
 import unlenen.cloud.openstack.be.model.response.OpenStackResponse;
 import unlenen.cloud.openstack.be.modules.compute.models.Quota;
+import unlenen.cloud.openstack.be.modules.compute.models.ServerCreateRequest;
 import unlenen.cloud.openstack.be.modules.compute.service.ComputeService;
 
 /**
@@ -150,6 +151,48 @@ public class ComputeController {
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
+    @GetMapping("/servers")
+    public ResponseEntity<OpenStackResponse> getServers(@RequestHeader("token") String token,@RequestParam String projectId){
+        OpenStackResponse openStackResponse = new OpenStackResponse();
+        HttpStatus httpStatus;
+        try {
+            openStackResponse.setOpenStackResult(computeService.getServers(token, projectId));
+            httpStatus = HttpStatus.OK;
+        } catch (Exception e) {
+            httpStatus = handleError(openStackResponse, e);
+        }
+        return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
+    }
+
+
+    @PutMapping("/servers")
+    public ResponseEntity<OpenStackResponse> createServer(@RequestHeader("token") String token,@RequestBody ServerCreateRequest serverCreateRequest){
+        OpenStackResponse openStackResponse = new OpenStackResponse();
+        HttpStatus httpStatus;
+        try {
+            openStackResponse.setOpenStackResult(computeService.createServer(token, serverCreateRequest));
+            httpStatus = HttpStatus.ACCEPTED;
+        } catch (Exception e) {
+            httpStatus = handleError(openStackResponse, e);
+        }
+        return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
+    }
+
+    @DeleteMapping("/servers/{server_id}")
+    public ResponseEntity<OpenStackResponse> deleteServer(
+            @RequestHeader("token") String token,
+            @PathVariable() String server_id) {
+        OpenStackResponse openStackResponse = new OpenStackResponse();
+        HttpStatus httpStatus;
+        try {
+            computeService.deleteServer(token, server_id);
+            httpStatus = HttpStatus.NO_CONTENT;
+        } catch (Exception e) {
+            httpStatus = handleError(openStackResponse, e);
+        }
+        return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
+    }
+ 
     private HttpStatus handleError(OpenStackResponse openStackResponse, Exception e) {
         HttpStatus httpStatus;
         openStackResponse.setError(new ErrorInfo(e.getClass().getSimpleName(), e.getMessage()));
