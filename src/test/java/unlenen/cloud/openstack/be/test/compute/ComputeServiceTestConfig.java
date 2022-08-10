@@ -59,5 +59,25 @@ public class ComputeServiceTestConfig {
     @Value("${testData.compute_service.quota.project}")
     String quotaProjectName;
 
+    @Value("${testData.compute_service.server.name}")
+    String serverName;
+
+    @Value("${testData.compute_service.server.flavorRef}")
+    String serverFlavorRef;
+
+    @Value("${testData.compute_service.server.imageRef}")
+    String serverImageRef;
+
+    @Value("${testData.compute_service.server.key_name}")
+    String serverKeyName;
+
+    @Value("${testData.compute_service.server.availability_zone}")
+    String serverAvailability_zone;
+
+    @Value("${testData.compute_service.server.network_uuid}")
+    String serverNetworkUuid;
+
+    @Value("${testData.compute_service.server.securityGroupName}")
+    String serverSecurityGroupName;
     
 }

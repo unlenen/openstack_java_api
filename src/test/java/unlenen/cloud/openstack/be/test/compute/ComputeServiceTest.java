@@ -217,21 +217,21 @@ public class ComputeServiceTest {
 
             JSONObject root = new JSONObject();
             JSONObject server= new JSONObject();
-            server.put("name", "onurcan");
-            server.put("flavorRef", "6");
-            server.put("imageRef","84bcc888-f31c-469b-adbb-f961d0fb04ee");
-            server.put("key_name","cloud" );
-            server.put("availability_zone", "nova");
+            server.put("name", config.getServerName());
+            server.put("flavorRef", config.getServerFlavorRef());
+            server.put("imageRef",config.getServerImageRef());
+            server.put("key_name",config.getServerKeyName() );
+            server.put("availability_zone", config.getServerAvailability_zone());
 
             JSONArray networkArray= new JSONArray();  
             JSONObject network = new JSONObject();   
-            network.put("uuid", "a54dcc04-9076-4772-a572-a91d9de24c04");  
+            network.put("uuid", config.getServerNetworkUuid());  
             networkArray.put(network);
             server.put("networks", networkArray);
 
             JSONArray securitygroupArray= new JSONArray();  
             JSONObject securityGroup = new JSONObject();   
-            securityGroup.put("name", "onurcan");  
+            securityGroup.put("name", config.getServerSecurityGroupName());  
             securitygroupArray.put(securityGroup);
             server.put("security_groups", securitygroupArray);
             
@@ -260,7 +260,11 @@ public class ComputeServiceTest {
     public void test_0043_deleteServer() {
         assertDoesNotThrow(() -> {
             String token = createSystemToken();
-            computeService.deleteServer(token, "81aa6761-1dac-4857-a9d7-6789f9cec007");
+            DomainResult domainResult = identityService.getDomains(token, config.getDomainName());
+            ProjectResult projectResult = identityService.getProjects(token, domainResult.domains.get(0).id,
+                    config.getProjectName());
+            String server_id=computeService.getServers(token, projectResult.projects.get(0).id).servers.stream().filter(s->s.name.equals(config.getServerName())).findFirst().get().id;
+            computeService.deleteServer(token, server_id);
            
         });
     }
