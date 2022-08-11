@@ -1,5 +1,6 @@
 package unlenen.cloud.openstack.be.modules.network.service;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -13,9 +14,8 @@ import unlenen.cloud.openstack.be.constant.Parameter;
 import unlenen.cloud.openstack.be.constant.ParameterType;
 import unlenen.cloud.openstack.be.modules.network.models.Floatingip;
 import unlenen.cloud.openstack.be.modules.network.models.FloatingipRoot;
-import unlenen.cloud.openstack.be.modules.network.models.Network;
 import unlenen.cloud.openstack.be.modules.network.models.NetworkRoot;
-import unlenen.cloud.openstack.be.modules.network.models.SecurityGroup;
+import unlenen.cloud.openstack.be.modules.network.models.RouterRoot;
 import unlenen.cloud.openstack.be.modules.network.models.SecurityGroupRoot;
 import unlenen.cloud.openstack.be.modules.network.models.SecurityGroupRuleRoot;
 import unlenen.cloud.openstack.be.modules.network.models.SubnetRoot;
@@ -23,6 +23,9 @@ import unlenen.cloud.openstack.be.modules.network.result.FloatingipCreateResult;
 import unlenen.cloud.openstack.be.modules.network.result.FloatingipResult;
 import unlenen.cloud.openstack.be.modules.network.result.NetworkCreateResult;
 import unlenen.cloud.openstack.be.modules.network.result.NetworkResult;
+import unlenen.cloud.openstack.be.modules.network.result.RouterCreateResult;
+import unlenen.cloud.openstack.be.modules.network.result.RouterInterfaceResult;
+import unlenen.cloud.openstack.be.modules.network.result.RouterResult;
 import unlenen.cloud.openstack.be.modules.network.result.SecurityGroupCreateResult;
 import unlenen.cloud.openstack.be.modules.network.result.SecurityGroupResult;
 import unlenen.cloud.openstack.be.modules.network.result.SecurityGroupRuleCreateResult;
@@ -199,7 +202,6 @@ public class NetworkService extends CommonService {
                                 floatingipRoot);
         }
 
-
         @Call(type = HttpMethod.DELETE, url = "/v2.0/floatingips/{floatingip_id}", statusCode = HttpStatus.NO_CONTENT)
         public void deleteFloatingip(String token, String floatingip_id) throws Exception {
                 call(getServiceURL(token, OpenStackModule.network),
@@ -212,4 +214,48 @@ public class NetworkService extends CommonService {
                                 });
         }
 
+        @Call(type = HttpMethod.GET, url = "/v2.0/routers", statusCode = HttpStatus.OK, openstackResult = RouterResult.class)
+        public RouterResult getRouters(String token) throws Exception {
+                return (RouterResult) callWithResult(getServiceURL(token, OpenStackModule.network),
+                                new Parameter[] {
+                                                new Parameter(OpenStackHeader.TOKEN.getKey(), token)
+                                },
+                                new Parameter[0]);
+        }
+
+        @Call(type = HttpMethod.POST, url = "/v2.0/routers", statusCode = HttpStatus.CREATED, openstackResult = RouterCreateResult.class)
+        public RouterCreateResult createRouter(String token, RouterRoot routerRoot) throws Exception {
+                return (RouterCreateResult) callWithResult(getServiceURL(token, OpenStackModule.network),
+                                new Parameter[] {
+                                                new Parameter(OpenStackHeader.TOKEN.getKey(), token)
+                                },
+                                new Parameter[0],
+                                routerRoot);
+        }
+
+        @Call(type = HttpMethod.DELETE, url = "/v2.0/routers/{router_id}", statusCode = HttpStatus.NO_CONTENT)
+        public void deleteRouter(String token, String router_id) throws Exception {
+                call(getServiceURL(token, OpenStackModule.network),
+                                new Parameter[] {
+                                                new Parameter(OpenStackHeader.TOKEN.getKey(), token)
+                                },
+                                new Parameter[] {
+                                                new Parameter("router_id", router_id,
+                                                                ParameterType.URI)
+                                });
+        }
+
+        @Call(type = HttpMethod.PUT, url = "/v2.0/routers/{router_id}/add_router_interface", statusCode = HttpStatus.OK, openstackResult = RouterInterfaceResult.class)
+        public RouterInterfaceResult addRouterInterface(String token, String router_id, String subnet_id) throws Exception {
+                JSONObject subnetId = new JSONObject();
+                subnetId.put("subnet_id", subnet_id);
+                return (RouterInterfaceResult) callWithResult(getServiceURL(token, OpenStackModule.network),
+                                new Parameter[] {
+                                                new Parameter(OpenStackHeader.TOKEN.getKey(), token)
+                                },
+                                new Parameter[] {
+                                        new Parameter("router_id", router_id, ParameterType.URI),
+                                },
+                                subnetId.toString(),3);
+        }
 }

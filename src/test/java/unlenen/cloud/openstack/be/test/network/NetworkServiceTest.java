@@ -21,6 +21,8 @@ import unlenen.cloud.openstack.be.modules.identity.service.IdentityService;
 import unlenen.cloud.openstack.be.modules.network.models.AllocationPool;
 import unlenen.cloud.openstack.be.modules.network.models.Network;
 import unlenen.cloud.openstack.be.modules.network.models.NetworkRoot;
+import unlenen.cloud.openstack.be.modules.network.models.Router;
+import unlenen.cloud.openstack.be.modules.network.models.RouterRoot;
 import unlenen.cloud.openstack.be.modules.network.models.SecurityGroup;
 import unlenen.cloud.openstack.be.modules.network.models.SecurityGroupRoot;
 import unlenen.cloud.openstack.be.modules.network.models.SecurityGroupRule;
@@ -239,4 +241,43 @@ public class NetworkServiceTest {
             networkService.deleteFloatingip(token,floatingipId);
         });
     }
+
+    @Test
+    public void test_0031_createRouter() {
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            RouterRoot routerRoot=new RouterRoot();
+            Router router= new Router();
+            router.setName(config.getRouterName());
+            routerRoot.router=router;
+            networkService.createRouter(token, routerRoot);
+        });
+    }
+
+    @Test
+    public void test_0032_listRouters() {
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            networkService.getRouters(token);
+        });
+    }
+
+    @Test
+    public void test_0033_deleteRouter() {
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            String router_id= networkService.getRouters(token).routers.stream().filter(r->r.getName().equals(config.getRouterName())).findFirst().get().getId();
+            networkService.deleteRouter(token, router_id);
+        });
+    }
+    @Test
+    public void test_0034_addRouterInterface() {
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            String router_id = "ed78c9f4-467c-41ca-a900-70bb32338dcd";
+            String subnet_id="04ab1c68-450c-4d6a-b42b-b2aa6975936b";
+            networkService.addRouterInterface(token, router_id, subnet_id);
+        });
+    }
+
 }
