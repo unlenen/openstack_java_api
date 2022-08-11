@@ -26,7 +26,7 @@ public class Network implements OpenStackRequest {
     public String tenant_id;
 
     @JsonInclude(Include.NON_NULL)
-    public boolean admin_state_up = true;
+    public Boolean admin_state_up;
 
     @JsonInclude(Include.NON_NULL)
     public Integer mtu;
@@ -38,7 +38,7 @@ public class Network implements OpenStackRequest {
     public ArrayList<String> subnets;
 
     @JsonInclude(Include.NON_NULL)
-    public boolean shared =false;
+    public Boolean shared;
 
     @JsonInclude(Include.NON_NULL)
     public ArrayList<Object> availability_zone_hints;
@@ -54,7 +54,7 @@ public class Network implements OpenStackRequest {
 
     @JsonProperty("router:external")
     @JsonInclude(Include.NON_NULL)
-    public boolean routerExternal=false;
+    public Boolean routerExternal;
 
     @JsonInclude(Include.NON_NULL)
     public String description;
@@ -63,7 +63,7 @@ public class Network implements OpenStackRequest {
     public Object qos_policy_id;
 
     @JsonInclude(Include.NON_NULL)
-    public boolean port_security_enabled=false;
+    public Boolean port_security_enabled;
 
     @JsonInclude(Include.NON_NULL)
     public String dns_domain;
@@ -71,7 +71,7 @@ public class Network implements OpenStackRequest {
     @JsonAlias("is_default")
     @JsonProperty("is_default")
     @JsonInclude(Include.NON_NULL)
-    public boolean is_default=false;
+    public Boolean is_default;
 
     @JsonInclude(Include.NON_NULL)
     public ArrayList<Object> tags;

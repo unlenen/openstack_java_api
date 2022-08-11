@@ -53,8 +53,15 @@ testData:
         quota:
             domain: argela
             project: onurcan
-            
-            
+        server:
+            name: onurcan
+            flavorRef: 6
+            imageRef: 84bcc888-f31c-469b-adbb-f961d0fb04ee
+            key_name: cloud
+            availability_zone: nova    
+            network_uuid: a54dcc04-9076-4772-a572-a91d9de24c04
+            securityGroupName: onurcan
+
     image_service:
         domain:
             name: argela

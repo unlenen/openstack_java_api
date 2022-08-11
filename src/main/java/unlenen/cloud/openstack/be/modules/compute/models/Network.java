@@ -8,12 +8,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-
-/**
- *
- * @author Nebi
- */
-public class SecurityGroup{
+public class Network {
     @JsonInclude(Include.NON_NULL)
-    public String name;
+    public String uuid;
+    @JsonInclude(Include.NON_NULL)
+    public String tag;
 }
