@@ -213,4 +213,30 @@ public class NetworkServiceTest {
         });
     }
 
+    @Test
+    public void test_0021_createFloatingIp() {
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            String floating_network_id = config.getFloating_network_id();
+            String floating_ip_address = config.getFloating_ip_address();
+            networkService.createFloatingip(token, floating_network_id, floating_ip_address);
+        });
+    }
+
+    @Test
+    public void test_0022_listFloatingIps() {
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            assert networkService.getFloatingIps(token)!=null;
+        });
+    }
+
+    @Test
+    public void test_0023_deleteFloatingIp() {
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            String floatingipId= networkService.getFloatingIps(token).floatingips.stream().filter(f->f.floating_ip_address.equals(config.getFloating_ip_address())).findFirst().get().getId();
+            networkService.deleteFloatingip(token,floatingipId);
+        });
+    }
 }

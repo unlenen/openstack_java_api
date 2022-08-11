@@ -81,4 +81,11 @@ public class NetworkServiceTestConfig {
     @Value("${testData.network_service.subnet.gateaway_ip}")
     String subnetGateawayIp;
 
+    @Value("${testData.network_service.floatingip.floating_network_id}")
+    String floating_network_id;
+
+    @Value("${testData.network_service.floatingip.floating_ip_address}")
+    String floating_ip_address;
+
+
 }

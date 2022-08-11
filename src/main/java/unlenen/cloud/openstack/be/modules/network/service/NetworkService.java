@@ -11,12 +11,16 @@ import unlenen.cloud.openstack.be.constant.OpenStackHeader;
 import unlenen.cloud.openstack.be.constant.OpenStackModule;
 import unlenen.cloud.openstack.be.constant.Parameter;
 import unlenen.cloud.openstack.be.constant.ParameterType;
+import unlenen.cloud.openstack.be.modules.network.models.Floatingip;
+import unlenen.cloud.openstack.be.modules.network.models.FloatingipRoot;
 import unlenen.cloud.openstack.be.modules.network.models.Network;
 import unlenen.cloud.openstack.be.modules.network.models.NetworkRoot;
 import unlenen.cloud.openstack.be.modules.network.models.SecurityGroup;
 import unlenen.cloud.openstack.be.modules.network.models.SecurityGroupRoot;
 import unlenen.cloud.openstack.be.modules.network.models.SecurityGroupRuleRoot;
 import unlenen.cloud.openstack.be.modules.network.models.SubnetRoot;
+import unlenen.cloud.openstack.be.modules.network.result.FloatingipCreateResult;
+import unlenen.cloud.openstack.be.modules.network.result.FloatingipResult;
 import unlenen.cloud.openstack.be.modules.network.result.NetworkCreateResult;
 import unlenen.cloud.openstack.be.modules.network.result.NetworkResult;
 import unlenen.cloud.openstack.be.modules.network.result.SecurityGroupCreateResult;
@@ -162,6 +166,48 @@ public class NetworkService extends CommonService {
                                 },
                                 new Parameter[] {
                                                 new Parameter("subnet_id", subnet_id,
+                                                                ParameterType.URI)
+                                });
+        }
+
+        @Call(type = HttpMethod.GET, url = "/v2.0/floatingips", statusCode = HttpStatus.OK, openstackResult = FloatingipResult.class)
+        public FloatingipResult getFloatingIps(String token) throws Exception {
+                return (FloatingipResult) callWithResult(getServiceURL(token, OpenStackModule.network),
+                                new Parameter[] {
+                                                new Parameter(OpenStackHeader.TOKEN.getKey(), token)
+                                },
+                                new Parameter[0]);
+        }
+
+        @Call(type = HttpMethod.POST, url = "/v2.0/floatingips", statusCode = HttpStatus.CREATED, openstackResult = FloatingipCreateResult.class)
+        public FloatingipCreateResult createFloatingip(String token, String floating_network_id,
+                        String floating_ip_address) throws Exception {
+                FloatingipRoot floatingipRoot = new FloatingipRoot();
+                Floatingip floatingip = new Floatingip();
+                if (!floating_ip_address.equals("")) {
+                        floatingip.setFloating_ip_address(floating_ip_address);
+                }
+
+                floatingip.setFloating_network_id(floating_network_id);
+                floatingipRoot.floatingip = floatingip;
+                return (FloatingipCreateResult) callWithResult(getServiceURL(token,
+                                OpenStackModule.network),
+                                new Parameter[] {
+                                                new Parameter(OpenStackHeader.TOKEN.getKey(), token)
+                                },
+                                new Parameter[0],
+                                floatingipRoot);
+        }
+
+
+        @Call(type = HttpMethod.DELETE, url = "/v2.0/floatingips/{floatingip_id}", statusCode = HttpStatus.NO_CONTENT)
+        public void deleteFloatingip(String token, String floatingip_id) throws Exception {
+                call(getServiceURL(token, OpenStackModule.network),
+                                new Parameter[] {
+                                                new Parameter(OpenStackHeader.TOKEN.getKey(), token)
+                                },
+                                new Parameter[] {
+                                                new Parameter("floatingip_id", floatingip_id,
                                                                 ParameterType.URI)
                                 });
         }

@@ -96,6 +96,9 @@ testData:
             allocation_pool_start: 10.10.0.2
             allocation_pool_end: 10.10.0.254
             gateaway_ip: 10.10.0.1
+        floatingip:
+            floating_network_id: 32de4597-026b-47a9-86c2-10c2ea88011e
+            floating_ip_address: 192.168.231.107    
 
     orchestration_service:
         stack:
