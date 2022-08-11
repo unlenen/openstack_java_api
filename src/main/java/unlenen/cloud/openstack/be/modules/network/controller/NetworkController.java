@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import unlenen.cloud.openstack.be.exception.UnvalidCallException;
@@ -189,6 +190,49 @@ public class NetworkController {
         HttpStatus httpStatus;
         try {
             networkService.deleteSubnet(token, subnet_id);
+            httpStatus = HttpStatus.NO_CONTENT;
+        } catch (Exception e) {
+            httpStatus = handleError(openStackResponse, e);
+        }
+        return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
+    }
+
+    @GetMapping("/v2.0/floatingips")
+    public ResponseEntity<OpenStackResponse> getFloatingips(@RequestHeader("token") String token) {
+        OpenStackResponse openStackResponse = new OpenStackResponse();
+        HttpStatus httpStatus;
+        try {
+            openStackResponse.setOpenStackResult(networkService.getFloatingIps(token));
+            httpStatus = HttpStatus.OK;
+        } catch (Exception e) {
+            httpStatus = handleError(openStackResponse, e);
+        }
+        return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
+    }
+
+    @PostMapping("//v2.0/floatingips")
+    public ResponseEntity<OpenStackResponse> createFloatingip(@RequestHeader("token") String token,
+           @RequestParam String floating_network_id,
+           @RequestParam String floating_ip_address ) {
+        OpenStackResponse openStackResponse = new OpenStackResponse();
+        HttpStatus httpStatus;
+        try {
+            openStackResponse.setOpenStackResult(networkService.createFloatingip(token, floating_network_id, floating_ip_address));
+            httpStatus = HttpStatus.CREATED;
+        } catch (Exception e) {
+            httpStatus = handleError(openStackResponse, e);
+        }
+        return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
+    }
+
+    @DeleteMapping("/v2.0/floatingips/{floatingip_id}}")
+    public ResponseEntity<OpenStackResponse> deleteFloatingip(
+            @RequestHeader("token") String token,
+            @PathVariable() String floatingip_id) {
+        OpenStackResponse openStackResponse = new OpenStackResponse();
+        HttpStatus httpStatus;
+        try {
+            networkService.deleteFloatingip(token, floatingip_id);
             httpStatus = HttpStatus.NO_CONTENT;
         } catch (Exception e) {
             httpStatus = handleError(openStackResponse, e);
