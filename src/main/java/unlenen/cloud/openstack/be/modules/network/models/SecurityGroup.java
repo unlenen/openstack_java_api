@@ -6,14 +6,14 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import unlenen.cloud.openstack.be.model.request.OpenStackRequest;
-
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+import unlenen.cloud.openstack.be.model.request.OpenStackRequest;
 
 @Getter
 @Setter
-
+@ToString
 public class SecurityGroup implements OpenStackRequest {
     @JsonInclude(Include.NON_NULL)
     public String id;

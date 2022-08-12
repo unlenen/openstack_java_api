@@ -1,13 +1,13 @@
 package unlenen.cloud.openstack.be.modules.compute.models;
 
+import java.util.ArrayList;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.ArrayList;
+import lombok.ToString;
 
 
 /**
@@ -16,6 +16,7 @@ import java.util.ArrayList;
  */
 @Getter
 @Setter
+@ToString
 public class ServerCreate {
 
     @JsonInclude(Include.NON_NULL)

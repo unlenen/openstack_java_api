@@ -2,9 +2,11 @@ package unlenen.cloud.openstack.be.modules.network.models;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 public class PortDetails {
     public String name;
     public String network_id;

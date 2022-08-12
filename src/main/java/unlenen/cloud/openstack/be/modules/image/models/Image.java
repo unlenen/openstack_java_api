@@ -1,8 +1,13 @@
 package unlenen.cloud.openstack.be.modules.image.models;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Date;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import unlenen.cloud.openstack.be.model.entities.Entity;
 import unlenen.cloud.openstack.be.model.result.OpenStackResult;
 
@@ -10,6 +15,9 @@ import unlenen.cloud.openstack.be.model.result.OpenStackResult;
  *
  * @author Nebi
  */
+@Getter
+@Setter
+@ToString
 public class Image extends Entity implements OpenStackResult {
 
     @JsonProperty("owner_specified.openstack.md5")

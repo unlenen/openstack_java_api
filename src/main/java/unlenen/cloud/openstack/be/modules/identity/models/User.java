@@ -2,16 +2,20 @@ package unlenen.cloud.openstack.be.modules.identity.models;
 
 import java.util.Date;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import unlenen.cloud.openstack.be.model.entities.Entity;
 
 /**
  *
  * @author Nebi
  */
+@Getter
+@Setter
+@ToString
 public class User extends Entity {
-
     public Domain domain;
-
     public String domain_id;
     public boolean enabled;
     public String default_project_id;

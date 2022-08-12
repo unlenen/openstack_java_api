@@ -3,10 +3,17 @@ package unlenen.cloud.openstack.be.modules.orchestration.models;
 import java.util.Date;
 import java.util.List;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 /**
  *
  * @author Nebi
  */
+@Getter
+@Setter
+@ToString
 public class Stack {
 
     public String id;
