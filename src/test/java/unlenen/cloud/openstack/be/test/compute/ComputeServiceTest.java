@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import unlenen.cloud.openstack.be.Application;
 import unlenen.cloud.openstack.be.modules.compute.models.Flavor;
+import unlenen.cloud.openstack.be.modules.compute.models.FlavorCreateRequest;
 import unlenen.cloud.openstack.be.modules.compute.models.Keypair;
 import unlenen.cloud.openstack.be.modules.compute.models.KeypairData;
 import unlenen.cloud.openstack.be.modules.compute.models.Quota;
@@ -80,12 +81,19 @@ public class ComputeServiceTest {
     public void test_0001_createFlavor() {
         assertDoesNotThrow(() -> {
             String token = createSystemToken();
-            FlavorCreateResult flavorCreateResult = computeService.createFlavor(
-                    token,
-                    config.getFlavorName(),
-                    config.getFlavorVcpus(),
-                    config.getFlavorRam(),
-                    config.getFlavorDisk());
+            JSONObject root = new JSONObject();
+            JSONObject flavor= new JSONObject();
+            root.put("flavor", flavor);
+            flavor.put("name", config.getFlavorName());
+            flavor.put("vcpus", config.getFlavorVcpus());
+            flavor.put("ram", config.getFlavorRam());
+            flavor.put("disk", config.getFlavorDisk());
+
+            ObjectMapper om = new ObjectMapper();
+            String myJsonString=root.toString();
+            FlavorCreateRequest flavorCreateRequest = om.readValue(myJsonString, FlavorCreateRequest.class);
+
+            FlavorCreateResult flavorCreateResult = computeService.createFlavor(token,flavorCreateRequest);
             assert flavorCreateResult.flavor.id != null;
         });
     }
@@ -274,6 +282,15 @@ public class ComputeServiceTest {
         assertDoesNotThrow(() -> {
             String token = createSystemToken();
             computeService.associateFloatingip(token, "bb81a0db-d70f-44ed-903d-67e1de151675", "192.168.231.107");
+
+        });
+    }  
+
+    @Test
+    public void test_0051_disassociateFloatingIp(){
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            computeService.disassociateFloatingip(token, "bb81a0db-d70f-44ed-903d-67e1de151675", "192.168.231.107");
 
         });
     }  
