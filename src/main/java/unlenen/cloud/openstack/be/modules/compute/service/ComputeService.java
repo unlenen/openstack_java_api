@@ -172,4 +172,20 @@ public class ComputeService extends CommonService {
                                 root.toString(),
                                 3);
         }
+        @Call(type = HttpMethod.POST, url = "/servers/{server_id}/action", statusCode = HttpStatus.ACCEPTED)
+        public void associateFloatingip(String token, String server_id, String address) throws Exception {
+                JSONObject root = new JSONObject();
+                JSONObject addFloatingIp = new JSONObject();
+                root.put("addFloatingIp", addFloatingIp);
+                addFloatingIp.put("address", address);
+
+                callWithResult(getServiceURL(token, OpenStackModule.compute),
+                new Parameter[] {
+                                new Parameter(OpenStackHeader.TOKEN.getKey(), token)
+                },
+                new Parameter[]{
+                        new Parameter("server_id", server_id, ParameterType.URI),
+                }, 
+                root.toString(),3);
+        }
 }

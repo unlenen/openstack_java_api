@@ -10,6 +10,7 @@ import unlenen.cloud.openstack.be.constant.OpenStackHeader;
 import unlenen.cloud.openstack.be.constant.OpenStackModule;
 import unlenen.cloud.openstack.be.constant.Parameter;
 import unlenen.cloud.openstack.be.constant.ParameterType;
+import unlenen.cloud.openstack.be.modules.image.constant.ImageVisibility;
 import unlenen.cloud.openstack.be.modules.image.models.Image;
 import unlenen.cloud.openstack.be.modules.image.models.ImageContainerFormat;
 import unlenen.cloud.openstack.be.modules.image.models.ImageDiskFormat;
@@ -39,7 +40,7 @@ public class ImageService extends CommonService {
 
         @Call(type = HttpMethod.POST, url = "/v2/images", bodyFile = "payloads/image/image_create.json", statusCode = HttpStatus.CREATED, openstackResult = Image.class)
         public Image createImage(String token, String name, ImageDiskFormat diskFormat,
-                        ImageContainerFormat containerFormat) throws Exception {
+                        ImageContainerFormat containerFormat, ImageVisibility imageVisibility) throws Exception {
                 return (Image) callWithResult(getServiceURL(token, OpenStackModule.image),
                                 new Parameter[] {
                                                 new Parameter(OpenStackHeader.TOKEN.getKey(), token)
@@ -48,7 +49,10 @@ public class ImageService extends CommonService {
                                                 new Parameter("NAME", name, ParameterType.JSON),
                                                 new Parameter("DISK_FORMAT", diskFormat.name(), ParameterType.JSON),
                                                 new Parameter("CONTAINER_FORMAT", containerFormat.name(),
-                                                                ParameterType.JSON), });
+                                                                ParameterType.JSON),
+                                                new Parameter("VISIBILITY", imageVisibility.name().toLowerCase(),
+                                                                ParameterType.JSON)
+                                });
         }
 
         @Call(type = HttpMethod.DELETE, url = "/v2/images/{image_id}", statusCode = HttpStatus.NO_CONTENT)
@@ -107,14 +111,14 @@ public class ImageService extends CommonService {
                                 },
                                 new Parameter[] {
                                                 new Parameter("image_id", image_id, ParameterType.URI),
-                                                new Parameter("filePath", filePath,ParameterType.FILE)
+                                                new Parameter("filePath", filePath, ParameterType.FILE)
                                 });
         }
 
-        public String getImageUrl(String token, String image_id) throws Exception{
-                String serviceUrl=getServiceURL(token, OpenStackModule.image);
+        public String getImageUrl(String token, String image_id) throws Exception {
+                String serviceUrl = getServiceURL(token, OpenStackModule.image);
                 String url = "/v2/images/{image_id}/file".replace("{image_id}", image_id);
-                return serviceUrl+url;
+                return serviceUrl + url;
         }
 
 }

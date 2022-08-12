@@ -88,11 +88,11 @@ public class NetworkController {
 
     @PostMapping("/v2.0/security-groups")
     public ResponseEntity<OpenStackResponse> createSecurityGroup(@RequestHeader("token") String token,
-            @RequestBody SecurityGroupRoot securityGroupRoot) {
+            @RequestParam String name) {
         OpenStackResponse openStackResponse = new OpenStackResponse();
         HttpStatus httpStatus;
         try {
-            openStackResponse.setOpenStackResult(networkService.createSecurityGroup(token, securityGroupRoot));
+            openStackResponse.setOpenStackResult(networkService.createSecurityGroup(token, name));
             httpStatus = HttpStatus.CREATED;
         } catch (Exception e) {
             httpStatus = handleError(openStackResponse, e);
@@ -256,11 +256,11 @@ public class NetworkController {
     }
 
     @PostMapping("/v2.0/routers")
-    public ResponseEntity<OpenStackResponse> createRouter(@RequestHeader("token") String token,@RequestBody RouterRoot routerRoot) {
+    public ResponseEntity<OpenStackResponse> createRouter(@RequestHeader("token") String token,@RequestParam String name, @RequestParam String external_network_id) {
         OpenStackResponse openStackResponse = new OpenStackResponse();
         HttpStatus httpStatus;
         try {
-            openStackResponse.setOpenStackResult(networkService.createRouter(token, routerRoot));
+            openStackResponse.setOpenStackResult(networkService.createRouter(token, name,external_network_id));
             httpStatus = HttpStatus.OK;
         } catch (Exception e) {
             httpStatus = handleError(openStackResponse, e);

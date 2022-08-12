@@ -269,6 +269,14 @@ public class ComputeServiceTest {
         });
     }
 
+    @Test
+    public void test_0050_associateFloatingIp(){
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            computeService.associateFloatingip(token, "bb81a0db-d70f-44ed-903d-67e1de151675", "192.168.231.107");
+
+        });
+    }  
 
 
 }

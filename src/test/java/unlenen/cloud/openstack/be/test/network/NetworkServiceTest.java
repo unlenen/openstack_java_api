@@ -65,13 +65,7 @@ public class NetworkServiceTest {
     public void test_0001_createSecurityGroup() {
         assertDoesNotThrow(() -> {
             String token = createSystemToken();
-            SecurityGroupRoot securityGroupRoot = new SecurityGroupRoot();
-            SecurityGroup securityGroup = new SecurityGroup();
-            securityGroup.setName(config.getSecurityGroupName());
-            securityGroup.setProject_id(config.getSecurityGroupProjectId());
-            securityGroup.setTenant_id(config.getSecurityGroupProjectId());
-            securityGroupRoot.security_group = securityGroup;
-            networkService.createSecurityGroup(token, securityGroupRoot);
+            networkService.createSecurityGroup(token, config.getSecurityGroupName());
         });
     }
 
@@ -246,11 +240,7 @@ public class NetworkServiceTest {
     public void test_0031_createRouter() {
         assertDoesNotThrow(() -> {
             String token = createSystemToken();
-            RouterRoot routerRoot=new RouterRoot();
-            Router router= new Router();
-            router.setName(config.getRouterName());
-            routerRoot.router=router;
-            networkService.createRouter(token, routerRoot);
+            networkService.createRouter(token, config.getRouterName(),config.getRouterExternalNetworkId());
         });
     }
 

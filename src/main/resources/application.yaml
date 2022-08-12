@@ -101,6 +101,7 @@ testData:
             floating_ip_address: 192.168.231.107   
         router:
             name: onurcan 
+            external_network_id: 32de4597-026b-47a9-86c2-10c2ea88011e
 
     orchestration_service:
         stack:

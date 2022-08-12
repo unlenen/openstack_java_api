@@ -12,10 +12,13 @@ import unlenen.cloud.openstack.be.constant.OpenStackHeader;
 import unlenen.cloud.openstack.be.constant.OpenStackModule;
 import unlenen.cloud.openstack.be.constant.Parameter;
 import unlenen.cloud.openstack.be.constant.ParameterType;
+import unlenen.cloud.openstack.be.modules.network.models.ExternalGatewayInfo;
 import unlenen.cloud.openstack.be.modules.network.models.Floatingip;
 import unlenen.cloud.openstack.be.modules.network.models.FloatingipRoot;
 import unlenen.cloud.openstack.be.modules.network.models.NetworkRoot;
+import unlenen.cloud.openstack.be.modules.network.models.Router;
 import unlenen.cloud.openstack.be.modules.network.models.RouterRoot;
+import unlenen.cloud.openstack.be.modules.network.models.SecurityGroup;
 import unlenen.cloud.openstack.be.modules.network.models.SecurityGroupRoot;
 import unlenen.cloud.openstack.be.modules.network.models.SecurityGroupRuleRoot;
 import unlenen.cloud.openstack.be.modules.network.models.SubnetRoot;
@@ -85,8 +88,11 @@ public class NetworkService extends CommonService {
         }
 
         @Call(type = HttpMethod.POST, url = "/v2.0/security-groups", statusCode = HttpStatus.CREATED, openstackResult = SecurityGroupCreateResult.class)
-        public SecurityGroupCreateResult createSecurityGroup(String token, SecurityGroupRoot securityGroupRoot)
+        public SecurityGroupCreateResult createSecurityGroup(String token,String name)
                         throws Exception {
+                SecurityGroupRoot securityGroupRoot=new SecurityGroupRoot();
+                securityGroupRoot.setSecurity_group(new SecurityGroup());
+                securityGroupRoot.getSecurity_group().setName(name);
                 return (SecurityGroupCreateResult) callWithResult(getServiceURL(token,
                                 OpenStackModule.network),
                                 new Parameter[] {
@@ -224,7 +230,14 @@ public class NetworkService extends CommonService {
         }
 
         @Call(type = HttpMethod.POST, url = "/v2.0/routers", statusCode = HttpStatus.CREATED, openstackResult = RouterCreateResult.class)
-        public RouterCreateResult createRouter(String token, RouterRoot routerRoot) throws Exception {
+        public RouterCreateResult createRouter(String token, String name, String external_network_id) throws Exception {
+                RouterRoot routerRoot = new RouterRoot();
+                Router router = new Router();
+                routerRoot.router = router;
+                router.setName(name);
+                router.setExternal_gateway_info(new ExternalGatewayInfo());
+                router.getExternal_gateway_info().network_id = external_network_id;
+
                 return (RouterCreateResult) callWithResult(getServiceURL(token, OpenStackModule.network),
                                 new Parameter[] {
                                                 new Parameter(OpenStackHeader.TOKEN.getKey(), token)
@@ -246,7 +259,8 @@ public class NetworkService extends CommonService {
         }
 
         @Call(type = HttpMethod.PUT, url = "/v2.0/routers/{router_id}/add_router_interface", statusCode = HttpStatus.OK, openstackResult = RouterInterfaceResult.class)
-        public RouterInterfaceResult addRouterInterface(String token, String router_id, String subnet_id) throws Exception {
+        public RouterInterfaceResult addRouterInterface(String token, String router_id, String subnet_id)
+                        throws Exception {
                 JSONObject subnetId = new JSONObject();
                 subnetId.put("subnet_id", subnet_id);
                 return (RouterInterfaceResult) callWithResult(getServiceURL(token, OpenStackModule.network),
@@ -254,8 +268,8 @@ public class NetworkService extends CommonService {
                                                 new Parameter(OpenStackHeader.TOKEN.getKey(), token)
                                 },
                                 new Parameter[] {
-                                        new Parameter("router_id", router_id, ParameterType.URI),
+                                                new Parameter("router_id", router_id, ParameterType.URI),
                                 },
-                                subnetId.toString(),3);
+                                subnetId.toString(), 3);
         }
 }

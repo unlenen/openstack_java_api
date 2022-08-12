@@ -20,6 +20,7 @@ import unlenen.cloud.openstack.be.constant.OpenStackModule;
 import unlenen.cloud.openstack.be.exception.UnvalidCallException;
 import unlenen.cloud.openstack.be.model.response.ErrorInfo;
 import unlenen.cloud.openstack.be.model.response.OpenStackResponse;
+import unlenen.cloud.openstack.be.modules.image.constant.ImageVisibility;
 import unlenen.cloud.openstack.be.modules.image.models.ImageContainerFormat;
 import unlenen.cloud.openstack.be.modules.image.models.ImageDiskFormat;
 import unlenen.cloud.openstack.be.modules.image.service.ImageService;
@@ -57,11 +58,13 @@ public class ImageController {
             @RequestHeader("token") String token,
             @PathVariable() String name,
             @RequestParam(required = true, name = "diskFormat") ImageDiskFormat diskFormat,
-            @RequestParam(required = true, name = "containerFormat") ImageContainerFormat containerFormat) {
+            @RequestParam(required = true, name = "containerFormat") ImageContainerFormat containerFormat,
+            @RequestParam(defaultValue = "PUBLIC") ImageVisibility imageVisibility) {
         OpenStackResponse openStackResponse = new OpenStackResponse();
         HttpStatus httpStatus;
         try {
-            openStackResponse.setOpenStackResult(imageService.createImage(token, name, diskFormat, containerFormat));
+            openStackResponse.setOpenStackResult(
+                    imageService.createImage(token, name, diskFormat, containerFormat, imageVisibility));
             httpStatus = HttpStatus.CREATED;
         } catch (Exception e) {
             httpStatus = handleError(openStackResponse, e);
@@ -136,10 +139,10 @@ public class ImageController {
             @PathVariable() String image_id) throws Exception {
 
         return ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT)
-                .location(URI.create(imageService.getImageUrl(token, image_id))).header("X-Auth-Token", token).contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .location(URI.create(imageService.getImageUrl(token, image_id))).header("X-Auth-Token", token)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .build();
     }
-
 
     private HttpStatus handleError(OpenStackResponse openStackResponse, Exception e) {
         HttpStatus httpStatus;
