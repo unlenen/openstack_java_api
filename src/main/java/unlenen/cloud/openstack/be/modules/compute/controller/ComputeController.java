@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import unlenen.cloud.openstack.be.exception.UnvalidCallException;
 import unlenen.cloud.openstack.be.model.response.ErrorInfo;
 import unlenen.cloud.openstack.be.model.response.OpenStackResponse;
+import unlenen.cloud.openstack.be.modules.compute.models.FlavorCreateRequest;
 import unlenen.cloud.openstack.be.modules.compute.models.Quota;
 import unlenen.cloud.openstack.be.modules.compute.models.ServerCreateRequest;
 import unlenen.cloud.openstack.be.modules.compute.service.ComputeService;
@@ -46,18 +47,15 @@ public class ComputeController {
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
-    @PostMapping("/flavor/{name}/{vcpus}/{ram}/{disk}")
+    @PostMapping("/flavors")
     public ResponseEntity<OpenStackResponse> createFlavor(
             @RequestHeader("token") String token,
-            @PathVariable() String name,
-            @PathVariable() Integer vcpus,
-            @PathVariable() Integer ram,
-            @PathVariable() Integer disk,
-            @RequestParam(required = false, name = "description", defaultValue = "") String description) {
+            @RequestBody FlavorCreateRequest flavorCreateRequest
+        ){
         OpenStackResponse openStackResponse = new OpenStackResponse();
         HttpStatus httpStatus;
         try {
-            openStackResponse.setOpenStackResult(computeService.createFlavor(token, name, vcpus, ram, disk));
+            openStackResponse.setOpenStackResult(computeService.createFlavor(token,flavorCreateRequest));
             httpStatus = HttpStatus.CREATED;
         } catch (Exception e) {
             httpStatus = handleError(openStackResponse, e);
@@ -192,6 +190,40 @@ public class ComputeController {
         }
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
+
+    @PutMapping("/server/{server_id}/{address}")
+    public ResponseEntity<OpenStackResponse> associateFloatingIp (
+            @RequestHeader("token") String token,
+            @PathVariable String address,
+            @PathVariable String server_id) {
+        OpenStackResponse openStackResponse = new OpenStackResponse();
+        HttpStatus httpStatus;
+        try {
+            computeService.associateFloatingip(token, server_id, address);
+            httpStatus = HttpStatus.NO_CONTENT;
+        } catch (Exception e) {
+            httpStatus = handleError(openStackResponse, e);
+        }
+        return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
+    }
+
+    @DeleteMapping("/server/{server_id}/{address}")
+    public ResponseEntity<OpenStackResponse> disassociateFloatingIp (
+            @RequestHeader("token") String token,
+            @PathVariable String address,
+            @PathVariable() String server_id) {
+        OpenStackResponse openStackResponse = new OpenStackResponse();
+        HttpStatus httpStatus;
+        try {
+            computeService.disassociateFloatingip(token, server_id, address);
+            httpStatus = HttpStatus.NO_CONTENT;
+        } catch (Exception e) {
+            httpStatus = handleError(openStackResponse, e);
+        }
+        return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
+    }
+
+
  
     private HttpStatus handleError(OpenStackResponse openStackResponse, Exception e) {
         HttpStatus httpStatus;

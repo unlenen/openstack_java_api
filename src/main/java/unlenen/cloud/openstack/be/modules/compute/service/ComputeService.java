@@ -14,6 +14,7 @@ import unlenen.cloud.openstack.be.constant.OpenStackHeader;
 import unlenen.cloud.openstack.be.constant.OpenStackModule;
 import unlenen.cloud.openstack.be.constant.Parameter;
 import unlenen.cloud.openstack.be.constant.ParameterType;
+import unlenen.cloud.openstack.be.modules.compute.models.FlavorCreateRequest;
 import unlenen.cloud.openstack.be.modules.compute.models.Quota;
 import unlenen.cloud.openstack.be.modules.compute.models.ServerCreateRequest;
 import unlenen.cloud.openstack.be.modules.compute.result.FlavorCreateResult;
@@ -44,19 +45,15 @@ public class ComputeService extends CommonService {
                                 new Parameter[0]);
         }
 
-        @Call(type = HttpMethod.POST, url = "/flavors", bodyFile = "payloads/compute/flavor_create.json", statusCode = HttpStatus.OK, openstackResult = FlavorCreateResult.class)
-        public FlavorCreateResult createFlavor(String token, String name, int vcpus, int ram, int disk)
+        @Call(type = HttpMethod.POST, url = "/flavors", statusCode = HttpStatus.OK, openstackResult = FlavorCreateResult.class)
+        public FlavorCreateResult createFlavor(String token, FlavorCreateRequest flavorCreateRequest)
                         throws Exception {
                 return (FlavorCreateResult) callWithResult(getServiceURL(token, OpenStackModule.compute),
                                 new Parameter[] {
                                                 new Parameter(OpenStackHeader.TOKEN.getKey(), token)
                                 },
-                                new Parameter[] {
-                                                new Parameter("NAME", name, ParameterType.JSON),
-                                                new Parameter("RAM", ram + "", ParameterType.JSON),
-                                                new Parameter("VCPUS", vcpus + "", ParameterType.JSON),
-                                                new Parameter("DISK", disk + "", ParameterType.JSON)
-                                });
+                                new Parameter[0],
+                                flavorCreateRequest);
         }
 
         @Call(type = HttpMethod.DELETE, url = "/flavors/{flavor_id}", statusCode = HttpStatus.ACCEPTED)
@@ -83,14 +80,14 @@ public class ComputeService extends CommonService {
 
         }
 
-        @Call(type = HttpMethod.POST, url = "/servers", statusCode = HttpStatus.ACCEPTED,openstackResult = ServerCreateResult.class)
-        public ServerCreateResult createServer(String token, ServerCreateRequest serverRoot) throws Exception {
+        @Call(type = HttpMethod.POST, url = "/servers", statusCode = HttpStatus.ACCEPTED, openstackResult = ServerCreateResult.class)
+        public ServerCreateResult createServer(String token, ServerCreateRequest serverCreateRequest) throws Exception {
                 return (ServerCreateResult) callWithResult(getServiceURL(token, OpenStackModule.compute),
                                 new Parameter[] {
                                                 new Parameter(OpenStackHeader.TOKEN.getKey(), token)
                                 },
                                 new Parameter[0],
-                                serverRoot);
+                                serverCreateRequest);
         }
 
         @Call(type = HttpMethod.DELETE, url = "/servers/{server_id}", statusCode = HttpStatus.NO_CONTENT)
@@ -171,5 +168,39 @@ public class ComputeService extends CommonService {
                                 },
                                 root.toString(),
                                 3);
+        }
+
+        @Call(type = HttpMethod.POST, url = "/servers/{server_id}/action", statusCode = HttpStatus.ACCEPTED)
+        public void associateFloatingip(String token, String server_id, String address) throws Exception {
+                JSONObject root = new JSONObject();
+                JSONObject addFloatingIp = new JSONObject();
+                root.put("addFloatingIp", addFloatingIp);
+                addFloatingIp.put("address", address);
+
+                callWithResult(getServiceURL(token, OpenStackModule.compute),
+                                new Parameter[] {
+                                                new Parameter(OpenStackHeader.TOKEN.getKey(), token)
+                                },
+                                new Parameter[] {
+                                                new Parameter("server_id", server_id, ParameterType.URI),
+                                },
+                                root.toString(), 3);
+        }
+
+        @Call(type = HttpMethod.POST, url = "/servers/{server_id}/action", statusCode = HttpStatus.ACCEPTED)
+        public void disassociateFloatingip(String token, String server_id, String address) throws Exception {
+                JSONObject root = new JSONObject();
+                JSONObject addFloatingIp = new JSONObject();
+                root.put("removeFloatingIp", addFloatingIp);
+                addFloatingIp.put("address", address);
+
+                callWithResult(getServiceURL(token, OpenStackModule.compute),
+                                new Parameter[] {
+                                                new Parameter(OpenStackHeader.TOKEN.getKey(), token)
+                                },
+                                new Parameter[] {
+                                                new Parameter("server_id", server_id, ParameterType.URI),
+                                },
+                                root.toString(), 3);
         }
 }

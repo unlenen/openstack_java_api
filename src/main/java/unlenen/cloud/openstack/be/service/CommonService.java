@@ -48,10 +48,9 @@ public class CommonService {
     @Autowired
     ObjectMapper objectMapper;
 
-
     protected String getServiceURL(String token, OpenStackModule openStackModule) throws Exception {
         if (openStackModule == OpenStackModule.orchestration || openStackModule == OpenStackModule.volumev3) {
-            return  getTokenBasedServiceUrl(token, openStackModule); 
+            return getTokenBasedServiceUrl(token, openStackModule);
         } else {
             return config.getServiceURL(openStackModule);
         }
@@ -82,9 +81,17 @@ public class CommonService {
             String reqBody, int index) throws Exception {
         Call call = getCall(index);
         ResponseEntity responseEntity = callOpenStack(call, baseURL, extraHeaders, parameters, reqBody);
+        if (call.openstackResult() == OpenStackResult.class) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("[Response][NO-RESPONSE] URL:" + baseURL + " , headers:" + Arrays.asList(extraHeaders)
+                        + " , parameters: " + Arrays.asList(parameters));
+            }
+            return null;
+        }
         String body = responseEntity.getBody().toString();
         if (logger.isDebugEnabled()) {
-            logger.debug("[Response] URL:" + baseURL + " , headers:" + extraHeaders + " , parameters: " + parameters
+            logger.debug("[Response] URL:" + baseURL + " , headers:" + Arrays.asList(extraHeaders) + " , parameters: "
+                    + Arrays.asList(parameters)
                     + " , response:" + body);
         }
         return (OpenStackResult) objectMapper.readValue(body, call.openstackResult());
@@ -133,7 +140,7 @@ public class CommonService {
         return jsonWriter.writeValueAsString(obj);
     }
 
-    @Call(type = HttpMethod.GET, url ="/auth/tokens",statusCode = HttpStatus.OK, openstackResult = TokenResult.class)
+    @Call(type = HttpMethod.GET, url = "/auth/tokens", statusCode = HttpStatus.OK, openstackResult = TokenResult.class)
     public TokenResult getTokenInformation(String authToken, String subjectToken) throws Exception {
         return (TokenResult) callWithResult(config.getIdentityURL(),
                 new Parameter[] {

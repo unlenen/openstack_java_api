@@ -15,6 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import unlenen.cloud.openstack.be.Application;
 import unlenen.cloud.openstack.be.modules.identity.result.LoginResult;
 import unlenen.cloud.openstack.be.modules.identity.service.IdentityService;
+import unlenen.cloud.openstack.be.modules.image.constant.ImageVisibility;
 import unlenen.cloud.openstack.be.modules.image.models.Image;
 import unlenen.cloud.openstack.be.modules.image.models.ImageContainerFormat;
 import unlenen.cloud.openstack.be.modules.image.models.ImageDiskFormat;
@@ -55,7 +56,7 @@ public class ImageServiceTest {
     public void test_0001_createImage() {
         assertDoesNotThrow(() -> {
             String token = createSystemToken();
-            Image imageCreateResult = imageService.createImage(token, config.getImageName(), ImageDiskFormat.qcow2, ImageContainerFormat.bare);
+            Image imageCreateResult = imageService.createImage(token, config.getImageName(), ImageDiskFormat.qcow2, ImageContainerFormat.bare, ImageVisibility.PUBLIC);
             assert imageCreateResult.id != null;
         });
     }

@@ -27,9 +27,9 @@ public class SecurityGroupRule {
     @JsonInclude(Include.NON_NULL)
     public String protocol;
     @JsonInclude(Include.NON_NULL)
-    public int port_range_min;
+    public Integer port_range_min;
     @JsonInclude(Include.NON_NULL)
-    public int port_range_max;
+    public Integer port_range_max;
     @JsonInclude(Include.NON_NULL)
     public String remote_ip_prefix;
     @JsonInclude(Include.NON_NULL)
