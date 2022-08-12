@@ -81,7 +81,6 @@ public class CommonService {
     protected OpenStackResult callWithResult(String baseURL, Parameter[] extraHeaders, Parameter[] parameters,
             String reqBody, int index) throws Exception {
         Call call = getCall(index);
-        System.out.println(reqBody);
         ResponseEntity responseEntity = callOpenStack(call, baseURL, extraHeaders, parameters, reqBody);
         String body = responseEntity.getBody().toString();
         if (logger.isDebugEnabled()) {

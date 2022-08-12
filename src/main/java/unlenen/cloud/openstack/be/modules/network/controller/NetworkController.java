@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ import unlenen.cloud.openstack.be.exception.UnvalidCallException;
 import unlenen.cloud.openstack.be.model.response.ErrorInfo;
 import unlenen.cloud.openstack.be.model.response.OpenStackResponse;
 import unlenen.cloud.openstack.be.modules.network.models.NetworkRoot;
+import unlenen.cloud.openstack.be.modules.network.models.RouterRoot;
 import unlenen.cloud.openstack.be.modules.network.models.SecurityGroupRoot;
 import unlenen.cloud.openstack.be.modules.network.models.SecurityGroupRuleRoot;
 import unlenen.cloud.openstack.be.modules.network.models.SubnetRoot;
@@ -239,6 +241,64 @@ public class NetworkController {
         }
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
+
+    @GetMapping("/v2.0/routers")
+    public ResponseEntity<OpenStackResponse> getRouters(@RequestHeader("token") String token) {
+        OpenStackResponse openStackResponse = new OpenStackResponse();
+        HttpStatus httpStatus;
+        try {
+            openStackResponse.setOpenStackResult(networkService.getRouters(token));
+            httpStatus = HttpStatus.OK;
+        } catch (Exception e) {
+            httpStatus = handleError(openStackResponse, e);
+        }
+        return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
+    }
+
+    @PostMapping("/v2.0/routers")
+    public ResponseEntity<OpenStackResponse> createRouter(@RequestHeader("token") String token,@RequestBody RouterRoot routerRoot) {
+        OpenStackResponse openStackResponse = new OpenStackResponse();
+        HttpStatus httpStatus;
+        try {
+            openStackResponse.setOpenStackResult(networkService.createRouter(token, routerRoot));
+            httpStatus = HttpStatus.OK;
+        } catch (Exception e) {
+            httpStatus = handleError(openStackResponse, e);
+        }
+        return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
+    }
+
+    @DeleteMapping("/v2.0/routers/{router_id}")
+    public ResponseEntity<OpenStackResponse> deleteRouter(
+            @RequestHeader("token") String token,
+            @PathVariable() String router_id) {
+        OpenStackResponse openStackResponse = new OpenStackResponse();
+        HttpStatus httpStatus;
+        try {
+            networkService.deleteRouter(token, router_id);
+            httpStatus = HttpStatus.NO_CONTENT;
+        } catch (Exception e) {
+            httpStatus = handleError(openStackResponse, e);
+        }
+        return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
+    }
+
+    @PutMapping("/v2.0/routers/{router_id}/add_router_interface")
+    public ResponseEntity<OpenStackResponse> addRouterInterface(
+        @RequestHeader("token") String token,
+        @PathVariable() String router_id,
+        @RequestParam String subnet_id) {
+    OpenStackResponse openStackResponse = new OpenStackResponse();
+    HttpStatus httpStatus;
+    try {
+        openStackResponse.setOpenStackResult(networkService.addRouterInterface(token, router_id, subnet_id));
+        httpStatus = HttpStatus.OK;
+    } catch (Exception e) {
+        httpStatus = handleError(openStackResponse, e);
+    }
+    return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
+}
+
 
 
     private HttpStatus handleError(OpenStackResponse openStackResponse, Exception e) {

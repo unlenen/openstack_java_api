@@ -88,4 +88,7 @@ public class NetworkServiceTestConfig {
     String floating_ip_address;
 
 
+    @Value("${testData.network_service.router.name}")
+    String routerName;
+
 }
