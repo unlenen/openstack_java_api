@@ -10,11 +10,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import unlenen.cloud.openstack.be.model.request.OpenStackRequest;
 
 @Getter
 @Setter
-
+@ToString
 public class Network implements OpenStackRequest {
     @JsonInclude(Include.NON_NULL)
     public String id;

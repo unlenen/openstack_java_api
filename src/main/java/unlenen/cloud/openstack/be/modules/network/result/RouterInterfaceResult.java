@@ -5,13 +5,14 @@ import java.util.ArrayList;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import unlenen.cloud.openstack.be.model.result.OpenStackResult;
 
 @Getter
 @Setter
+@ToString
 public class RouterInterfaceResult implements OpenStackResult {
     @JsonInclude(Include.NON_NULL) public String id;
     @JsonInclude(Include.NON_NULL) public String tenant_id;

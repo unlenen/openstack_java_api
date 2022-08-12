@@ -4,10 +4,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 import unlenen.cloud.openstack.be.model.entities.Entity;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 /**
  *
  * @author Nebi
  */
+@Getter
+@Setter
+@ToString
 public class Flavor extends Entity {
 
     public int ram;
