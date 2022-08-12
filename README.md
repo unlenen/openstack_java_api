@@ -10,6 +10,14 @@ This project provides java api and OpenAPI supported Rest Controller to make ope
 
 In normal world OpenStack APIs are well documentated but no easy way to create client applications. This project may help you to create swagger based client application according to your programming languages.
 
+## LICENCE
+
+GNU Affero General Public License v3.0
+
+## Usage
+
+You are welcome to use in your projects . Any changes or improvement in code line must be pushed to this repository as a branch . 
+
 ## Swagger URL
 
 - http://your-ip:8080/swagger-ui/index.html
