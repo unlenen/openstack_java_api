@@ -1,3 +1,18 @@
+/*
+# Copyright © 2022 Nebi Volkan UNLENEN
+#
+# Licensed under the GNU Affero General Public License v3.0
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://github.com/unlenen/openstack_java_api/blob/master/LICENSE
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+ */
 package unlenen.cloud.openstack.be.test.network;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -21,20 +36,16 @@ import unlenen.cloud.openstack.be.modules.identity.service.IdentityService;
 import unlenen.cloud.openstack.be.modules.network.models.AllocationPool;
 import unlenen.cloud.openstack.be.modules.network.models.Network;
 import unlenen.cloud.openstack.be.modules.network.models.NetworkRoot;
-import unlenen.cloud.openstack.be.modules.network.models.Router;
-import unlenen.cloud.openstack.be.modules.network.models.RouterRoot;
-import unlenen.cloud.openstack.be.modules.network.models.SecurityGroup;
-import unlenen.cloud.openstack.be.modules.network.models.SecurityGroupRoot;
 import unlenen.cloud.openstack.be.modules.network.models.SecurityGroupRule;
 import unlenen.cloud.openstack.be.modules.network.models.SecurityGroupRuleRoot;
 import unlenen.cloud.openstack.be.modules.network.models.Subnet;
 import unlenen.cloud.openstack.be.modules.network.models.SubnetRoot;
-import unlenen.cloud.openstack.be.modules.network.result.NetworkCreateResult;
-import unlenen.cloud.openstack.be.modules.network.result.SecurityGroupCreateResult;
-import unlenen.cloud.openstack.be.modules.network.result.SecurityGroupRuleCreateResult;
-import unlenen.cloud.openstack.be.modules.network.result.SubnetCreateResult;
 import unlenen.cloud.openstack.be.modules.network.service.NetworkService;
 
+/**
+ *
+ * @author Nebi Volkan UNLENEN(unlenen@gmail.com)
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
 @TestPropertySource(locations = "classpath:application.yaml")

@@ -1,7 +1,21 @@
+/*
+# Copyright © 2022 Nebi Volkan UNLENEN
+#
+# Licensed under the GNU Affero General Public License v3.0
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://github.com/unlenen/openstack_java_api/blob/master/LICENSE
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+ */
 package unlenen.cloud.openstack.be.service;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
@@ -28,11 +42,10 @@ import unlenen.cloud.openstack.be.exception.UnvalidCallException;
 import unlenen.cloud.openstack.be.model.request.OpenStackRequest;
 import unlenen.cloud.openstack.be.model.result.OpenStackResult;
 import unlenen.cloud.openstack.be.modules.identity.result.TokenResult;
-import unlenen.cloud.openstack.be.modules.identity.service.IdentityService;
 
 /**
  *
- * @author Nebi
+ * @author Nebi Volkan UNLENEN(unlenen@gmail.com)
  */
 @Component
 public class CommonService {
