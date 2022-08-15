@@ -16,7 +16,7 @@ GNU Affero General Public License v3.0
 
 ## Usage
 
-You are welcome to use in your projects . Any changes or improvement in code line must be pushed to this repository as a branch . 
+You are welcome to use in your projects . Any changes or improvement in code line must be pushed to this repository as a branch rather than application.yaml (Property File) . 
 
 ## Swagger URL
 
