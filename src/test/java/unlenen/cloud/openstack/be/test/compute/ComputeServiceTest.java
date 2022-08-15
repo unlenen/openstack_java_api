@@ -2,10 +2,6 @@ package unlenen.cloud.openstack.be.test.compute;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.FixMethodOrder;
@@ -23,12 +19,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import unlenen.cloud.openstack.be.Application;
 import unlenen.cloud.openstack.be.modules.compute.models.Flavor;
-import unlenen.cloud.openstack.be.modules.compute.models.FlavorCreateRequest;
 import unlenen.cloud.openstack.be.modules.compute.models.Keypair;
 import unlenen.cloud.openstack.be.modules.compute.models.KeypairData;
 import unlenen.cloud.openstack.be.modules.compute.models.Quota;
-import unlenen.cloud.openstack.be.modules.compute.models.Server;
-import unlenen.cloud.openstack.be.modules.compute.models.ServerCreate;
 import unlenen.cloud.openstack.be.modules.compute.models.ServerCreateRequest;
 import unlenen.cloud.openstack.be.modules.compute.result.FlavorCreateResult;
 import unlenen.cloud.openstack.be.modules.compute.result.FlavorResult;
@@ -81,19 +74,13 @@ public class ComputeServiceTest {
     public void test_0001_createFlavor() {
         assertDoesNotThrow(() -> {
             String token = createSystemToken();
-            JSONObject root = new JSONObject();
-            JSONObject flavor= new JSONObject();
-            root.put("flavor", flavor);
-            flavor.put("name", config.getFlavorName());
-            flavor.put("vcpus", config.getFlavorVcpus());
-            flavor.put("ram", config.getFlavorRam());
-            flavor.put("disk", config.getFlavorDisk());
+            String name=config.getFlavorName();
+            Integer vcpus=config.getFlavorVcpus();
+            Integer ram=config.getFlavorRam();
+            Integer disk=config.getFlavorDisk();
 
-            ObjectMapper om = new ObjectMapper();
-            String myJsonString=root.toString();
-            FlavorCreateRequest flavorCreateRequest = om.readValue(myJsonString, FlavorCreateRequest.class);
-
-            FlavorCreateResult flavorCreateResult = computeService.createFlavor(token,flavorCreateRequest);
+            
+            FlavorCreateResult flavorCreateResult = computeService.createFlavor(token, null, name,vcpus, ram, disk);
             assert flavorCreateResult.flavor.id != null;
         });
     }

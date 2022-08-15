@@ -47,11 +47,12 @@ public class ComputeService extends CommonService {
         }
 
         @Call(type = HttpMethod.POST, url = "/flavors", statusCode = HttpStatus.OK, openstackResult = FlavorCreateResult.class)
-        public FlavorCreateResult createFlavor(String token, Integer id, int vcpus, int ram, int disk)
+        public FlavorCreateResult createFlavor(String token, Integer id, String name , int vcpus, int ram, int disk)
                         throws Exception {
                                 FlavorCreateRequest flavorCreateRequest= new FlavorCreateRequest();
                                 flavorCreateRequest.setFlavor(new FlavorCreate());
                                 flavorCreateRequest.getFlavor().setId(id);
+                                flavorCreateRequest.getFlavor().setName(name);
                                 flavorCreateRequest.getFlavor().setVcpus(vcpus);
                                 flavorCreateRequest.getFlavor().setRam(ram);
                                 flavorCreateRequest.getFlavor().setDisk(disk);

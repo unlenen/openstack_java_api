@@ -45,9 +45,10 @@ public class ComputeController {
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
-    @PostMapping("/flavor")
+    @PostMapping("/flavor/{name}")
     public ResponseEntity<OpenStackResponse> createFlavor(
             @RequestHeader("token") String token,
+            @PathVariable String name,
             @RequestParam(required = false) Integer id,
             @RequestParam() Integer vcpus,
             @RequestParam Integer ram,
@@ -55,7 +56,7 @@ public class ComputeController {
         OpenStackResponse openStackResponse = new OpenStackResponse();
         HttpStatus httpStatus;
         try {
-            openStackResponse.setOpenStackResult(computeService.createFlavor(token, id, vcpus, ram, disk));
+            openStackResponse.setOpenStackResult(computeService.createFlavor(token, id, name, vcpus, ram, disk));
             httpStatus = HttpStatus.CREATED;
         } catch (Exception e) {
             httpStatus = handleError(openStackResponse, e);
