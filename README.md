@@ -10,7 +10,7 @@ This project provides java api and OpenAPI supported Rest Controller to make ope
 
 In normal world OpenStack APIs are well documentated but no easy way to create client applications. This project may help you to create swagger based client application according to your programming languages.
 
-## LICENCE
+## Licence
 
 GNU Affero General Public License v3.0
 
