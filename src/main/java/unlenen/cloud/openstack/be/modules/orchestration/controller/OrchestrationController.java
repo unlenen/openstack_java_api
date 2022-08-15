@@ -35,7 +35,7 @@ public class OrchestrationController {
     @Autowired
     OrchestrationService orchestrationService;
 
-    @PostMapping("/stacks")
+    @PostMapping("/stack")
     public ResponseEntity<OpenStackResponse> createStack(@RequestHeader("token") String token,
             @RequestParam String name,
             @RequestPart(name = "template", required = true) MultipartFile template,
@@ -76,9 +76,10 @@ public class OrchestrationController {
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
-    @DeleteMapping("/stacks/{stack_name}/{stack_id}")
+    @DeleteMapping("/stack/{stack_id}/{stack_name}")
     public ResponseEntity<OpenStackResponse> deleteStack(@RequestHeader("token") String token,
-            @PathVariable String stack_name, @PathVariable String stack_id) {
+            @PathVariable String stack_id,
+            @PathVariable String stack_name) {
         OpenStackResponse openStackResponse = new OpenStackResponse();
         HttpStatus httpStatus;
         try {

@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import unlenen.cloud.openstack.be.constant.OpenStackModule;
 import unlenen.cloud.openstack.be.exception.UnvalidCallException;
 import unlenen.cloud.openstack.be.model.response.ErrorInfo;
 import unlenen.cloud.openstack.be.model.response.OpenStackResponse;
@@ -24,7 +23,6 @@ import unlenen.cloud.openstack.be.modules.image.constant.ImageVisibility;
 import unlenen.cloud.openstack.be.modules.image.models.ImageContainerFormat;
 import unlenen.cloud.openstack.be.modules.image.models.ImageDiskFormat;
 import unlenen.cloud.openstack.be.modules.image.service.ImageService;
-import unlenen.cloud.openstack.be.service.CommonService;
 
 /**
  *
@@ -87,7 +85,7 @@ public class ImageController {
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
-    @PutMapping("/v2/images/{image_id}/tags/{tag}")
+    @PutMapping("/image/{image_id}/tag/{tag}")
     public ResponseEntity<OpenStackResponse> addImageTag(
             @RequestHeader("token") String token,
             @PathVariable() String image_id,
@@ -105,7 +103,7 @@ public class ImageController {
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
-    @DeleteMapping("/v2/images/{image_id}/tags/{tag}")
+    @DeleteMapping("/image/{image_id}/tag/{tag}")
     public ResponseEntity<OpenStackResponse> deleteImageTag(
             @RequestHeader("token") String token,
             @PathVariable() String image_id,

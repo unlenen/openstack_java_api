@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import unlenen.cloud.openstack.be.exception.UnvalidCallException;
 import unlenen.cloud.openstack.be.model.response.ErrorInfo;
 import unlenen.cloud.openstack.be.model.response.OpenStackResponse;
-import unlenen.cloud.openstack.be.modules.volume.models.VolumeRoot;
 import unlenen.cloud.openstack.be.modules.volume.service.VolumeService;
 
 @RestController
@@ -39,7 +37,7 @@ public class VolumeController {
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
-    @PostMapping("/volumes")
+    @PostMapping("/volume")
     public ResponseEntity<OpenStackResponse> createVolume(@RequestHeader("token") String token,
             @RequestParam String name,
             @RequestParam String bootable,
@@ -56,7 +54,7 @@ public class VolumeController {
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
-    @DeleteMapping("/volumes/{volume_id}")
+    @DeleteMapping("/volume/{volume_id}")
     public ResponseEntity<OpenStackResponse> deleteVolume(
             @RequestHeader("token") String token,
             @PathVariable String volume_id) {

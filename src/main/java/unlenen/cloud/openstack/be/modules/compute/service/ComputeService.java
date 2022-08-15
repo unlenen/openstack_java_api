@@ -14,6 +14,7 @@ import unlenen.cloud.openstack.be.constant.OpenStackHeader;
 import unlenen.cloud.openstack.be.constant.OpenStackModule;
 import unlenen.cloud.openstack.be.constant.Parameter;
 import unlenen.cloud.openstack.be.constant.ParameterType;
+import unlenen.cloud.openstack.be.modules.compute.models.FlavorCreate;
 import unlenen.cloud.openstack.be.modules.compute.models.FlavorCreateRequest;
 import unlenen.cloud.openstack.be.modules.compute.models.Quota;
 import unlenen.cloud.openstack.be.modules.compute.models.ServerCreateRequest;
@@ -46,8 +47,14 @@ public class ComputeService extends CommonService {
         }
 
         @Call(type = HttpMethod.POST, url = "/flavors", statusCode = HttpStatus.OK, openstackResult = FlavorCreateResult.class)
-        public FlavorCreateResult createFlavor(String token, FlavorCreateRequest flavorCreateRequest)
+        public FlavorCreateResult createFlavor(String token, Integer id, int vcpus, int ram, int disk)
                         throws Exception {
+                                FlavorCreateRequest flavorCreateRequest= new FlavorCreateRequest();
+                                flavorCreateRequest.setFlavor(new FlavorCreate());
+                                flavorCreateRequest.getFlavor().setId(id);
+                                flavorCreateRequest.getFlavor().setVcpus(vcpus);
+                                flavorCreateRequest.getFlavor().setRam(ram);
+                                flavorCreateRequest.getFlavor().setDisk(disk);
                 return (FlavorCreateResult) callWithResult(getServiceURL(token, OpenStackModule.compute),
                                 new Parameter[] {
                                                 new Parameter(OpenStackHeader.TOKEN.getKey(), token)

@@ -18,8 +18,6 @@ import unlenen.cloud.openstack.be.exception.UnvalidCallException;
 import unlenen.cloud.openstack.be.model.response.ErrorInfo;
 import unlenen.cloud.openstack.be.model.response.OpenStackResponse;
 import unlenen.cloud.openstack.be.modules.network.models.NetworkRoot;
-import unlenen.cloud.openstack.be.modules.network.models.RouterRoot;
-import unlenen.cloud.openstack.be.modules.network.models.SecurityGroupRoot;
 import unlenen.cloud.openstack.be.modules.network.models.SecurityGroupRuleRoot;
 import unlenen.cloud.openstack.be.modules.network.models.SubnetRoot;
 import unlenen.cloud.openstack.be.modules.network.service.NetworkService;
@@ -31,7 +29,7 @@ public class NetworkController {
     @Autowired
     NetworkService networkService;
 
-    @GetMapping("/v2.0/security-group-rules")
+    @GetMapping("/security-group-rules")
     public ResponseEntity<OpenStackResponse> getSecurityGroupRules(@RequestHeader("token") String token) {
         OpenStackResponse openStackResponse = new OpenStackResponse();
         HttpStatus httpStatus;
@@ -44,7 +42,7 @@ public class NetworkController {
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
-    @PostMapping("/v2.0/security-group-rules")
+    @PostMapping("/security-group-rule")
     public ResponseEntity<OpenStackResponse> createSecurityGroupRules(@RequestHeader("token") String token,
             @RequestBody SecurityGroupRuleRoot securityGroupRuleRoot) {
         OpenStackResponse openStackResponse = new OpenStackResponse();
@@ -58,7 +56,7 @@ public class NetworkController {
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
-    @DeleteMapping("/v2.0/security-group-rules/{security_group_rule_id}")
+    @DeleteMapping("/security-group-rule/{security_group_rule_id}")
     public ResponseEntity<OpenStackResponse> deleteSecurityGroupRule(
             @RequestHeader("token") String token,
             @PathVariable() String security_group_rule_id) {
@@ -73,7 +71,7 @@ public class NetworkController {
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
-    @GetMapping("/v2.0/security-groups")
+    @GetMapping("/security-groups")
     public ResponseEntity<OpenStackResponse> getSecurityGroups(@RequestHeader("token") String token) {
         OpenStackResponse openStackResponse = new OpenStackResponse();
         HttpStatus httpStatus;
@@ -86,9 +84,9 @@ public class NetworkController {
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
-    @PostMapping("/v2.0/security-groups")
+    @PostMapping("/security-group/{name}")
     public ResponseEntity<OpenStackResponse> createSecurityGroup(@RequestHeader("token") String token,
-            @RequestParam String name) {
+            @PathVariable String name) {
         OpenStackResponse openStackResponse = new OpenStackResponse();
         HttpStatus httpStatus;
         try {
@@ -100,7 +98,7 @@ public class NetworkController {
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
-    @DeleteMapping("/v2.0/security-groups/{security_group_id}")
+    @DeleteMapping("/security-group/{security_group_id}")
     public ResponseEntity<OpenStackResponse> deleteSecurityGroup(
             @RequestHeader("token") String token,
             @PathVariable() String security_group_id) {
@@ -115,7 +113,7 @@ public class NetworkController {
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
-    @GetMapping("/v2.0/networks")
+    @GetMapping("/networks")
     public ResponseEntity<OpenStackResponse> getNetworks(@RequestHeader("token") String token) {
         OpenStackResponse openStackResponse = new OpenStackResponse();
         HttpStatus httpStatus;
@@ -128,7 +126,7 @@ public class NetworkController {
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
-    @PostMapping("/v2.0/network")
+    @PostMapping("/network")
     public ResponseEntity<OpenStackResponse> createNetwork(@RequestHeader("token") String token,
             @RequestBody NetworkRoot networkRoot) {
         OpenStackResponse openStackResponse = new OpenStackResponse();
@@ -142,7 +140,7 @@ public class NetworkController {
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
-    @DeleteMapping("/v2.0/networks/{network_id}")
+    @DeleteMapping("/network/{network_id}")
     public ResponseEntity<OpenStackResponse> deleteNetwork(
             @RequestHeader("token") String token,
             @PathVariable() String network_id) {
@@ -157,7 +155,7 @@ public class NetworkController {
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
-    @GetMapping("/v2.0/subnets")
+    @GetMapping("/subnets")
     public ResponseEntity<OpenStackResponse> getSubnets(@RequestHeader("token") String token) {
         OpenStackResponse openStackResponse = new OpenStackResponse();
         HttpStatus httpStatus;
@@ -170,7 +168,7 @@ public class NetworkController {
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
-    @PostMapping("/v2.0/subnets")
+    @PostMapping("/subnet")
     public ResponseEntity<OpenStackResponse> createSubnet(@RequestHeader("token") String token,
             @RequestBody SubnetRoot SubnetRoot) {
         OpenStackResponse openStackResponse = new OpenStackResponse();
@@ -184,7 +182,7 @@ public class NetworkController {
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
-    @DeleteMapping("/v2.0/subnets/{subnet_id}")
+    @DeleteMapping("/subnets/{subnet_id}")
     public ResponseEntity<OpenStackResponse> deleteSubnet(
             @RequestHeader("token") String token,
             @PathVariable() String subnet_id) {
@@ -199,7 +197,7 @@ public class NetworkController {
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
-    @GetMapping("/v2.0/floatingips")
+    @GetMapping("/floatingips")
     public ResponseEntity<OpenStackResponse> getFloatingips(@RequestHeader("token") String token) {
         OpenStackResponse openStackResponse = new OpenStackResponse();
         HttpStatus httpStatus;
@@ -212,14 +210,15 @@ public class NetworkController {
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
-    @PostMapping("//v2.0/floatingips")
+    @PostMapping("/floatingip")
     public ResponseEntity<OpenStackResponse> createFloatingip(@RequestHeader("token") String token,
-           @RequestParam String floating_network_id,
-           @RequestParam String floating_ip_address ) {
+            @RequestParam String floating_network_id,
+            @RequestParam String floating_ip_address) {
         OpenStackResponse openStackResponse = new OpenStackResponse();
         HttpStatus httpStatus;
         try {
-            openStackResponse.setOpenStackResult(networkService.createFloatingip(token, floating_network_id, floating_ip_address));
+            openStackResponse.setOpenStackResult(
+                    networkService.createFloatingip(token, floating_network_id, floating_ip_address));
             httpStatus = HttpStatus.CREATED;
         } catch (Exception e) {
             httpStatus = handleError(openStackResponse, e);
@@ -227,7 +226,7 @@ public class NetworkController {
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
-    @DeleteMapping("/v2.0/floatingips/{floatingip_id}}")
+    @DeleteMapping("/floatingip/{floatingip_id}")
     public ResponseEntity<OpenStackResponse> deleteFloatingip(
             @RequestHeader("token") String token,
             @PathVariable() String floatingip_id) {
@@ -242,7 +241,7 @@ public class NetworkController {
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
-    @GetMapping("/v2.0/routers")
+    @GetMapping("/routers")
     public ResponseEntity<OpenStackResponse> getRouters(@RequestHeader("token") String token) {
         OpenStackResponse openStackResponse = new OpenStackResponse();
         HttpStatus httpStatus;
@@ -255,12 +254,13 @@ public class NetworkController {
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
-    @PostMapping("/v2.0/routers")
-    public ResponseEntity<OpenStackResponse> createRouter(@RequestHeader("token") String token,@RequestParam String name, @RequestParam String external_network_id) {
+    @PostMapping("/router/{name}/{externalNetworkId}")
+    public ResponseEntity<OpenStackResponse> createRouter(@RequestHeader("token") String token,
+            @PathVariable String name, @PathVariable String externalNetworkId) {
         OpenStackResponse openStackResponse = new OpenStackResponse();
         HttpStatus httpStatus;
         try {
-            openStackResponse.setOpenStackResult(networkService.createRouter(token, name,external_network_id));
+            openStackResponse.setOpenStackResult(networkService.createRouter(token, name, externalNetworkId));
             httpStatus = HttpStatus.OK;
         } catch (Exception e) {
             httpStatus = handleError(openStackResponse, e);
@@ -268,7 +268,7 @@ public class NetworkController {
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
-    @DeleteMapping("/v2.0/routers/{router_id}")
+    @DeleteMapping("/router/{router_id}")
     public ResponseEntity<OpenStackResponse> deleteRouter(
             @RequestHeader("token") String token,
             @PathVariable() String router_id) {
@@ -283,23 +283,21 @@ public class NetworkController {
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
-    @PutMapping("/v2.0/routers/{router_id}/add_router_interface")
+    @PutMapping("/router/{router_id}/interface/{subnet_id}")
     public ResponseEntity<OpenStackResponse> addRouterInterface(
-        @RequestHeader("token") String token,
-        @PathVariable() String router_id,
-        @RequestParam String subnet_id) {
-    OpenStackResponse openStackResponse = new OpenStackResponse();
-    HttpStatus httpStatus;
-    try {
-        openStackResponse.setOpenStackResult(networkService.addRouterInterface(token, router_id, subnet_id));
-        httpStatus = HttpStatus.OK;
-    } catch (Exception e) {
-        httpStatus = handleError(openStackResponse, e);
+            @RequestHeader("token") String token,
+            @PathVariable() String router_id,
+            @PathVariable String subnet_id) {
+        OpenStackResponse openStackResponse = new OpenStackResponse();
+        HttpStatus httpStatus;
+        try {
+            openStackResponse.setOpenStackResult(networkService.addRouterInterface(token, router_id, subnet_id));
+            httpStatus = HttpStatus.OK;
+        } catch (Exception e) {
+            httpStatus = handleError(openStackResponse, e);
+        }
+        return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
-    return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
-}
-
-
 
     private HttpStatus handleError(OpenStackResponse openStackResponse, Exception e) {
         HttpStatus httpStatus;
