@@ -15,6 +15,7 @@
  */
 package unlenen.cloud.openstack.be.modules.volume.service;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -79,5 +80,57 @@ public class VolumeService extends CommonService {
                                                 new Parameter("volume_id", volume_id,
                                                                 ParameterType.URI)
                                 });
+        }
+
+        @Call(type = HttpMethod.POST, url="/volumes/{volume_id}/action", statusCode = HttpStatus.ACCEPTED)
+        public void extendVolumeSize(String token,String volume_id,int new_size) throws Exception{
+                JSONObject root = new JSONObject();
+                JSONObject osExtend= new JSONObject();
+                root.put("os-extend",osExtend);
+                osExtend.put("new_size",new_size);
+                callWithResult(getServiceURL(token, OpenStackModule.volumev3),
+                        new Parameter[] {
+                                new Parameter(OpenStackHeader.TOKEN.getKey(), token)
+                        },
+                        new Parameter[] {
+                                new Parameter("volume_id", volume_id, ParameterType.URI),
+                        },
+                        root.toString(), 3);
+        }
+
+        @Call(type = HttpMethod.POST, url="/volumes/{volume_id}/action", statusCode = HttpStatus.ACCEPTED)
+        public void attachVolumetoServer(String token,String volume_id,String instance_uuid,String mountpoint) throws Exception{
+                JSONObject root = new JSONObject();
+                JSONObject osAttach= new JSONObject();
+                root.put("os-attach",osAttach);
+                osAttach.put("instance_uuid",instance_uuid);
+                osAttach.put("mountpoint",mountpoint);
+
+                callWithResult(getServiceURL(token, OpenStackModule.volumev3),
+                        new Parameter[] {
+                                new Parameter(OpenStackHeader.TOKEN.getKey(), token)
+                        },
+                        new Parameter[] {
+                                new Parameter("volume_id", volume_id, ParameterType.URI),
+                        },
+                        root.toString(), 3);
+        }
+
+        @Call(type = HttpMethod.POST, url="/volumes/{volume_id}/action", statusCode = HttpStatus.ACCEPTED)
+        public void detachVolumefromServer(String token,String volume_id,String attachment_id) throws Exception{
+                JSONObject root = new JSONObject();
+                JSONObject osDetach= new JSONObject();
+                root.put("os-detach",osDetach);
+                if(attachment_id!=null){
+                        osDetach.put("attachment_id",attachment_id);
+                }
+                callWithResult(getServiceURL(token, OpenStackModule.volumev3),
+                        new Parameter[] {
+                                new Parameter(OpenStackHeader.TOKEN.getKey(), token)
+                        },
+                        new Parameter[] {
+                                new Parameter("volume_id", volume_id, ParameterType.URI),
+                        },
+                        root.toString(), 3);
         }
 }

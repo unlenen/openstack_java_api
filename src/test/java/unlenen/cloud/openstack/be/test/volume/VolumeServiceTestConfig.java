@@ -52,4 +52,13 @@ public class VolumeServiceTestConfig {
 
     @Value("${testData.volume_service.volume.size}")
     int volumeSize;
+
+    @Value("${testData.volume_service.volume.new_size}")
+    int volumeNewSize;
+
+    @Value("${testData.volume_service.volume.instance_uuid}")
+    String volumeInstanceUuid;
+
+    @Value("${testData.volume_service.volume.mountpoint}")
+    String volumeMountpoint;
 }
