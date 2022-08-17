@@ -107,5 +107,8 @@ You are welcome to use in your projects . Any changes or improvement in code lin
 - Get
 - Create
 - Delete
+- Attach
+- Detach
+- Resize
   
 
