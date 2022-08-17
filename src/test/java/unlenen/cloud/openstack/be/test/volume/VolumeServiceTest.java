@@ -92,4 +92,33 @@ public class VolumeServiceTest {
         });
     }
 
+    @Test
+    public void test_0011_extendVolumeSize(){
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            String volume_id= volumeService.getVolumes(token).volumes.stream().filter(v-> v.getName().equals(config.getVolumeName())).findFirst().get().getId();
+            int new_size=config.getVolumeNewSize();
+            volumeService.extendVolumeSize(token, volume_id, new_size);
+        });
+    }
+
+    @Test
+    public void test_0012_attachVolumetoServer(){
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            String volume_id= volumeService.getVolumes(token).volumes.stream().filter(v-> v.getName().equals(config.getVolumeName())).findFirst().get().getId();
+            String instance_uuid=config.getVolumeInstanceUuid();
+            String mountpoint=config.getVolumeMountpoint();
+            volumeService.attachVolumetoServer(token, volume_id, instance_uuid, mountpoint);
+        });
+    }
+
+    @Test
+    public void test_0013_detachVolumefromServer(){
+        assertDoesNotThrow(() -> {
+            String token = createSystemToken();
+            String volume_id= volumeService.getVolumes(token).volumes.stream().filter(v-> v.getName().equals(config.getVolumeName())).findFirst().get().getId();
+            volumeService.detachVolumefromServer(token, volume_id, null);
+        });
+    }
 }

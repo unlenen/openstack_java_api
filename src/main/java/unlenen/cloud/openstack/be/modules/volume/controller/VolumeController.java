@@ -88,6 +88,55 @@ public class VolumeController {
         return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
     }
 
+    @PostMapping("/volume/{volume_id}/extend")
+    public ResponseEntity<OpenStackResponse> extendVolumeSize(
+            @RequestHeader("token") String token,
+            @PathVariable String volume_id,
+            @RequestParam int new_size) {
+        OpenStackResponse openStackResponse = new OpenStackResponse();
+        HttpStatus httpStatus;
+        try {
+            volumeService.extendVolumeSize(token, volume_id, new_size);
+            httpStatus = HttpStatus.ACCEPTED;
+        } catch (Exception e) {
+            httpStatus = handleError(openStackResponse, e);
+        }
+        return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
+    }
+
+    @PostMapping("/volume/{volume_id}/attach")
+    public ResponseEntity<OpenStackResponse> attachVolumetoServer(
+            @RequestHeader("token") String token,
+            @PathVariable String volume_id,
+            @RequestParam String instance_uuid,
+            @RequestParam String mountpoint) {
+        OpenStackResponse openStackResponse = new OpenStackResponse();
+        HttpStatus httpStatus;
+        try {
+            volumeService.attachVolumetoServer(token, volume_id, instance_uuid, mountpoint);
+            httpStatus = HttpStatus.ACCEPTED;
+        } catch (Exception e) {
+            httpStatus = handleError(openStackResponse, e);
+        }
+        return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
+    }
+
+    @PostMapping("/volume/{volume_id}/detach")
+    public ResponseEntity<OpenStackResponse> detachVolumefromServer(
+            @RequestHeader("token") String token,
+            @PathVariable String volume_id,
+            @RequestParam(required = false) String attachment_id) {
+        OpenStackResponse openStackResponse = new OpenStackResponse();
+        HttpStatus httpStatus;
+        try {
+            volumeService.detachVolumefromServer(token, volume_id, attachment_id);
+            httpStatus = HttpStatus.ACCEPTED;
+        } catch (Exception e) {
+            httpStatus = handleError(openStackResponse, e);
+        }
+        return new ResponseEntity<OpenStackResponse>(openStackResponse, httpStatus);
+    }
+
     private HttpStatus handleError(OpenStackResponse openStackResponse, Exception e) {
         HttpStatus httpStatus;
         openStackResponse.setError(new ErrorInfo(e.getClass().getSimpleName(), e.getMessage()));
